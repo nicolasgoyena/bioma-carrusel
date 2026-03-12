@@ -171,7 +171,7 @@
           <div class="card-top-bar"></div>
           <div class="card-body">
             <div class="card-meta">
-              <span class="card-anio">${p.anio || "—"}</span>
+              <span class="card-anio">${p.anio ? parseInt(p.anio) : "—"}</span>
               ${p.tipo ? `<span class="card-tipo">${p.tipo}</span>` : ""}
             </div>
             <h3 class="card-titulo">${p.titulo || "Sin título"}</h3>

@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Últimas Publicaciones Científicas - BIOMA</title>
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --verde:      #3ab549;
+      --verde-dark: #2a8a36;
+      --verde-pale: #edf7ee;
+      --gris-text:  #2c2c2c;
+      --gris-mid:   #666;
+      --gris-light: #f4f4f4;
+      --blanco:     #ffffff;
+      --borde:      #e0e0e0;
+      --font-title: 'Libre Baskerville', Georgia, serif;
+      --font-body:  'Source Sans 3', Arial, sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--gris-light);
+      padding: 60px 24px;
+      color: var(--gris-text);
+    }
+
+    /* ── Sección ── */
+    .bioma-publicaciones {
+      max-width: 1140px;
+      margin: 0 auto;
+    }
+
+    .bioma-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 36px;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .bioma-header-left {}
+
+    .bioma-eyebrow {
+      font-family: var(--font-body);
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: var(--verde);
+      margin-bottom: 8px;
+    }
+
+    .bioma-titulo {
+      font-family: var(--font-title);
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--gris-text);
+      line-height: 1.2;
+    }
+
+    .bioma-ver-todas {
+      font-family: var(--font-body);
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--verde-dark);
+      text-decoration: none;
+      border-bottom: 2px solid var(--verde);
+      padding-bottom: 2px;
+      transition: color 0.2s;
+      white-space: nowrap;
+    }
+    .bioma-ver-todas:hover { color: var(--verde); }
+
+    /* ── Carrusel ── */
+    .carrusel-outer {
+      position: relative;
+    }
+
+    .carrusel-track {
+      display: flex;
+      gap: 24px;
+      overflow: hidden;
+      scroll-behavior: smooth;
+    }
+
+    /* ── Card ── */
+    .card {
+      min-width: 320px;
+      max-width: 320px;
+      background: var(--blanco);
+      border-radius: 2px;
+      display: flex;
+      flex-direction: column;
+      border: 1px solid var(--borde);
+      transition: box-shadow 0.25s, transform 0.25s;
+      overflow: hidden;
+    }
+
+    .card:hover {
+      box-shadow: 0 8px 28px rgba(0,0,0,0.10);
+      transform: translateY(-3px);
+    }
+
+    .card-top-bar {
+      height: 4px;
+      background: var(--verde);
+    }
+
+    .card-body {
+      padding: 24px 22px 20px;
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+    }
+
+    .card-meta {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .card-anio {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--verde-dark);
+      background: var(--verde-pale);
+      padding: 3px 9px;
+      border-radius: 2px;
+    }
+
+    .card-tipo {
+      font-size: 0.72rem;
+      color: var(--gris-mid);
+      font-style: italic;
+      letter-spacing: 0.3px;
+    }
+
+    .card-titulo {
+      font-family: var(--font-title);
+      font-size: 0.95rem;
+      font-weight: 700;
+      line-height: 1.5;
+      color: var(--gris-text);
+      margin-bottom: 16px;
+      flex-grow: 1;
+      display: -webkit-box;
+      -webkit-line-clamp: 5;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .card-autores-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--gris-mid);
+      margin-bottom: 5px;
+    }
+
+    .card-autores {
+      font-size: 0.82rem;
+      color: var(--gris-mid);
+      line-height: 1.55;
+      margin-bottom: 20px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .card-footer {
+      border-top: 1px solid var(--borde);
+      padding: 14px 22px;
+    }
+
+    .card-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      color: var(--verde-dark);
+      text-decoration: none;
+      transition: color 0.2s, gap 0.2s;
+    }
+
+    .card-link:hover {
+      color: var(--verde);
+      gap: 10px;
+    }
+
+    .card-link-arrow {
+      font-size: 1rem;
+      line-height: 1;
+    }
+
+    .card-sin-enlace {
+      font-size: 0.75rem;
+      color: #bbb;
+      font-style: italic;
+    }
+
+    /* ── Botones nav ── */
+    .nav-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: 2px solid var(--verde);
+      background: var(--blanco);
+      color: var(--verde);
+      font-size: 1.1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+      transition: background 0.2s, color 0.2s;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.10);
+    }
+    .nav-btn:hover { background: var(--verde); color: var(--blanco); }
+    .nav-btn.prev  { left: -22px; }
+    .nav-btn.next  { right: -22px; }
+
+    /* ── Indicadores ── */
+    .indicadores {
+      display: flex;
+      justify-content: center;
+      gap: 7px;
+      margin-top: 28px;
+    }
+
+    .indicador {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #ccc;
+      cursor: pointer;
+      transition: background 0.25s, transform 0.25s;
+    }
+    .indicador.activo {
+      background: var(--verde);
+      transform: scale(1.3);
+    }
+
+    /* ── Loading / Error ── */
+    .estado {
+      text-align: center;
+      padding: 48px 20px;
+      font-size: 0.95rem;
+      color: var(--gris-mid);
+      font-style: italic;
+    }
+    .estado.error { color: #c62828; }
+
+    /* ── Responsive ── */
+    @media (max-width: 900px) {
+      .card { min-width: 280px; max-width: 280px; }
+      .bioma-titulo { font-size: 1.5rem; }
+      .nav-btn.prev { left: -12px; }
+      .nav-btn.next { right: -12px; }
+    }
+
+    @media (max-width: 600px) {
+      .card { min-width: calc(100vw - 80px); max-width: calc(100vw - 80px); }
+      .bioma-ver-todas { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<section class="bioma-publicaciones">
+
+  <div class="bioma-header">
+    <div class="bioma-header-left">
+      <p class="bioma-eyebrow">Instituto BIOMA · UNAV</p>
+      <h2 class="bioma-titulo">Últimas publicaciones científicas</h2>
+    </div>
+    <a class="bioma-ver-todas"
+       href="https://www.unav.edu/web/instituto-de-biodiversidad-y-medio-ambiente/investigacion/publicaciones"
+       target="_blank" rel="noopener">
+      Ver todas las publicaciones →
+    </a>
+  </div>
+
+  <div class="carrusel-outer">
+    <button class="nav-btn prev" onclick="mover(-1)" aria-label="Anterior">&#8592;</button>
+    <div class="carrusel-track" id="carrusel">
+      <div class="estado">Cargando publicaciones...</div>
+    </div>
+    <button class="nav-btn next" onclick="mover(1)" aria-label="Siguiente">&#8594;</button>
+  </div>
+
+  <div class="indicadores" id="indicadores"></div>
+
+</section>
+
+<script>
+  const API_URL        = "https://script.google.com/macros/s/AKfycbxtm_g-eHtkUwHczcS_t4q2M0HBUqZxb9k4CTkg_4PRCSWFeMSJ25lOvrZBm-_9TRZ7qg/exec";
+  const CARDS_VISIBLES = 3;
+  const CARD_WIDTH     = 320 + 24; // width + gap
+  const AUTOPLAY_MS    = 6000;
+
+  let posicion      = 0;
+  let publicaciones = [];
+  let autoplayTimer = null;
+
+  async function cargarPublicaciones() {
+    try {
+      const resp = await fetch(API_URL);
+      if (!resp.ok) throw new Error();
+      publicaciones = await resp.json();
+      renderCarrusel();
+      renderIndicadores();
+      iniciarAutoplay();
+    } catch {
+      document.getElementById("carrusel").innerHTML =
+        '<div class="estado error">No se pudieron cargar las publicaciones. Inténtalo más tarde.</div>';
+    }
+  }
+
+  function renderCarrusel() {
+    document.getElementById("carrusel").innerHTML = publicaciones.map(p => {
+      const miembros = Array.isArray(p.miembros) ? p.miembros.join(", ") : (p.miembros || "");
+      const enlace   = p.url || null;
+
+      return `
+        <article class="card">
+          <div class="card-top-bar"></div>
+          <div class="card-body">
+            <div class="card-meta">
+              <span class="card-anio">${p.anio || "—"}</span>
+              ${p.tipo ? `<span class="card-tipo">${p.tipo}</span>` : ""}
+            </div>
+            <h3 class="card-titulo">${p.titulo || "Sin título"}</h3>
+            ${miembros ? `
+              <p class="card-autores-label">Autores BIOMA</p>
+              <p class="card-autores">${miembros}</p>
+            ` : ""}
+          </div>
+          <div class="card-footer">
+            ${enlace
+              ? `<a class="card-link" href="${enlace}" target="_blank" rel="noopener">
+                   Ver en portal científico <span class="card-link-arrow">→</span>
+                 </a>`
+              : `<span class="card-sin-enlace">Enlace no disponible</span>`
+            }
+          </div>
+        </article>
+      `;
+    }).join("");
+  }
+
+  function renderIndicadores() {
+    const maxPos = Math.max(0, publicaciones.length - CARDS_VISIBLES);
+    document.getElementById("indicadores").innerHTML =
+      Array.from({ length: maxPos + 1 }, (_, i) =>
+        `<div class="indicador ${i === 0 ? "activo" : ""}" onclick="irA(${i})"></div>`
+      ).join("");
+  }
+
+  function mover(dir) {
+    const maxPos = Math.max(0, publicaciones.length - CARDS_VISIBLES);
+    posicion     = Math.min(Math.max(posicion + dir, 0), maxPos);
+    aplicar();
+    reiniciarAutoplay();
+  }
+
+  function irA(idx) {
+    posicion = idx;
+    aplicar();
+    reiniciarAutoplay();
+  }
+
+  function aplicar() {
+    document.getElementById("carrusel").scrollLeft = posicion * CARD_WIDTH;
+    document.querySelectorAll(".indicador").forEach((el, i) =>
+      el.classList.toggle("activo", i === posicion)
+    );
+  }
+
+  function iniciarAutoplay() {
+    autoplayTimer = setInterval(() => {
+      const maxPos = Math.max(0, publicaciones.length - CARDS_VISIBLES);
+      posicion     = posicion >= maxPos ? 0 : posicion + 1;
+      aplicar();
+    }, AUTOPLAY_MS);
+  }
+
+  function reiniciarAutoplay() {
+    clearInterval(autoplayTimer);
+    iniciarAutoplay();
+  }
+
+  cargarPublicaciones();
+</script>
+
+</body>
+</html>

@@ -20,16 +20,25 @@
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
-    html { background: transparent; }
+    html, body {
+      width: 100vw;
+      overflow-x: hidden;
+      background: transparent;
+    }
 
     body {
       font-family: var(--font-body);
       background: transparent;
       padding: 60px 0;
       color: var(--gris-text);
+      /* Rompe el max-container del padre Liferay */
+      position: relative;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100vw;
     }
 
-    .bioma-publicaciones { width: 100%; }
+    .bioma-publicaciones { width: 100vw; }
 
     .bioma-header {
       display: flex; align-items: flex-end; justify-content: space-between;

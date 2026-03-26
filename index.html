@@ -1,235 +1,188 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Últimas Publicaciones Científicas - BIOMA</title>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet"/>
-  <style>
-    :root {
-      --verde:      #3ab549;
-      --verde-dark: #2a8a36;
-      --verde-pale: #edf7ee;
-      --gris-text:  #2c2c2c;
-      --gris-mid:   #666;
-      --gris-light: #f4f4f4;
-      --blanco:     #ffffff;
-      --borde:      #e0e0e0;
-      --font-title: 'Playfair Display', serif;
-      --font-body: 'Roboto', sans-serif;
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: var(--font-body);
-      background: #ffffff;
-      padding: 60px 24px;
-      color: var(--gris-text);
-    }
-    .bioma-publicaciones { max-width: 1140px; margin: 0 auto; }
-    .bioma-header {
-      display: flex; align-items: flex-end; justify-content: space-between;
-      margin-bottom: 36px; gap: 16px; flex-wrap: wrap;
-    }
-    .bioma-eyebrow {
-      font-family: var(--font-body); font-size: 0.72rem; font-weight: 700;
-      letter-spacing: 2.5px; text-transform: uppercase; color: var(--verde); margin-bottom: 8px;
-    }
-    .bioma-titulo {
-      font-family: var(--font-title); font-size: 2rem; font-weight: 700;
-      color: var(--gris-text); line-height: 1.2;
-    }
-    .bioma-ver-todas {
-      font-family: var(--font-body); font-size: 0.8rem; font-weight: 700;
-      letter-spacing: 1.5px; text-transform: uppercase; color: var(--verde-dark);
-      text-decoration: none; border-bottom: 2px solid var(--verde);
-      padding-bottom: 2px; transition: color 0.2s; white-space: nowrap;
-    }
-    .bioma-ver-todas:hover { color: var(--verde); }
-    .carrusel-outer { position: relative; }
-    .carrusel-track {
-      display: flex; gap: 24px; overflow: hidden;
-      scroll-behavior: smooth; padding: 12px 4px 20px;
-    }
-    .card {
-      min-width: 320px; max-width: 320px; background: var(--blanco);
-      border-radius: 10px; box-shadow: 0 2px 16px rgba(0,0,0,0.08);
-      display: flex; flex-direction: column; overflow: hidden;
-      transition: transform 0.25s, box-shadow 0.25s; flex-shrink: 0;
-    }
-    .card:hover { transform: translateY(-4px); box-shadow: 0 8px 28px rgba(0,0,0,0.13); }
-    .card-top-bar { height: 4px; background: var(--verde); flex-shrink: 0; }
-    .card-body {
-      padding: 20px 20px 12px; flex: 1;
-      display: flex; flex-direction: column; gap: 10px;
-    }
-    .card-meta { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-    .card-anio {
-      font-size: 0.72rem; font-weight: 700; letter-spacing: 1.5px;
-      color: var(--verde-dark); text-transform: uppercase;
-    }
-    .card-tipo {
-      font-size: 0.68rem; font-weight: 600; color: var(--gris-mid);
-      background: var(--verde-pale); border-radius: 30px;
-      padding: 2px 10px; text-transform: uppercase; letter-spacing: 0.8px;
-    }
-    .card-titulo {
-      font-family: var(--font-title); font-size: 0.95rem; font-weight: 700;
-      color: var(--gris-text); line-height: 1.45;
-      display: -webkit-box; -webkit-line-clamp: 4;
-      -webkit-box-orient: vertical; overflow: hidden;
-    }
-    .card-autores-label {
-      font-size: 0.65rem; font-weight: 700; letter-spacing: 1.2px;
-      text-transform: uppercase; color: var(--verde); margin-bottom: -4px;
-    }
-    .card-autores {
-      font-size: 0.78rem; color: var(--gris-mid); line-height: 1.45;
-      display: -webkit-box; -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical; overflow: hidden;
-    }
-    .card-footer {
-      padding: 12px 20px 18px; border-top: 1px solid var(--borde); margin-top: auto;
-    }
-    .card-link {
-      display: inline-flex; align-items: center; gap: 6px;
-      font-size: 0.75rem; font-weight: 700; letter-spacing: 0.8px;
-      text-transform: uppercase; color: var(--verde-dark);
-      text-decoration: none; transition: color 0.2s, gap 0.2s;
-    }
-    .card-link:hover { color: var(--verde); gap: 10px; }
-    .card-link-arrow { font-size: 1rem; line-height: 1; }
-    .card-sin-enlace { font-size: 0.75rem; color: #bbb; font-style: italic; }
-    .nav-btn {
-      position: absolute; top: 50%; transform: translateY(-50%);
-      width: 44px; height: 44px; border-radius: 50%;
-      border: 2px solid var(--verde); background: var(--blanco); color: var(--verde);
-      font-size: 1.1rem; cursor: pointer; display: flex;
-      align-items: center; justify-content: center; z-index: 10;
-      transition: background 0.2s, color 0.2s;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.10);
-    }
-    .nav-btn:hover { background: var(--verde); color: var(--blanco); }
-    .nav-btn.prev { left: -22px; }
-    .nav-btn.next { right: -22px; }
-    .indicadores { display: flex; justify-content: center; gap: 7px; margin-top: 28px; }
-    .indicador {
-      width: 7px; height: 7px; border-radius: 50%; background: #ccc;
-      cursor: pointer; transition: background 0.25s, transform 0.25s;
-    }
-    .indicador.activo { background: var(--verde); transform: scale(1.3); }
-    @media (max-width: 900px) {
-      .card { min-width: 280px; max-width: 280px; }
-      .bioma-titulo { font-size: 1.5rem; }
-      .nav-btn.prev { left: -12px; }
-      .nav-btn.next { right: -12px; }
-    }
-    @media (max-width: 600px) {
-      .card { min-width: calc(100vw - 80px); max-width: calc(100vw - 80px); }
-      .bioma-ver-todas { display: none; }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --verde:      #3ab549;
+  --verde-dark: #2a8a36;
+  --verde-pale: #edf7ee;
+  --gris-text:  #2c2c2c;
+  --gris-mid:   #666;
+  --gris-light: #f4f4f4;
+  --blanco:     #ffffff;
+  --borde:      #e0e0e0;
+  --font-title: 'Playfair Display', serif;
+  --font-body: 'Roboto', sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* 🔥 CLAVE: eliminar fondo blanco */
+html, body {
+  background: transparent !important;
+}
+
+body {
+  font-family: var(--font-body);
+  padding: 60px 24px;
+  color: var(--gris-text);
+}
+
+/* 🔥 aseguramos que ningún contenedor meta fondo */
+.bioma-publicaciones,
+.bioma-header,
+.carrusel-outer,
+.carrusel-track,
+.indicadores {
+  background: transparent !important;
+}
+
+.bioma-publicaciones {
+  max-width: 1200px;
+  margin: auto;
+}
+
+.bioma-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 30px;
+}
+
+.bioma-header h2 {
+  font-family: var(--font-title);
+  font-size: 34px;
+}
+
+.bioma-header a {
+  color: var(--verde);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.carrusel-outer {
+  position: relative;
+  overflow: hidden;
+}
+
+.carrusel-track {
+  display: flex;
+  gap: 24px;
+  transition: transform 0.5s ease;
+}
+
+.card {
+  min-width: 320px;
+  max-width: 320px;
+  background: var(--blanco);
+  border-radius: 10px;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: transform 0.25s, box-shadow 0.25s;
+  flex-shrink: 0;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+}
+
+.card-content {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.card h3 {
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.card .meta {
+  font-size: 12px;
+  color: var(--gris-mid);
+}
+
+.card a {
+  margin-top: auto;
+  color: var(--verde);
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.indicadores {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.indicadores span {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin: 0 4px;
+  background: #ccc;
+  border-radius: 50%;
+}
+
+.indicadores .activo {
+  background: var(--verde);
+}
+</style>
 </head>
+
 <body>
 
 <section class="bioma-publicaciones">
+
   <div class="bioma-header">
-    <div class="bioma-header-left">
-      <p class="bioma-eyebrow">Instituto BIOMA · UNAV</p>
-      <h2 class="bioma-titulo">Últimas publicaciones científicas</h2>
-    </div>
-    <a class="bioma-ver-todas"
-       href="https://portalcientifico.unav.edu/unidades/22157/publicaciones"
-       target="_blank" rel="noopener">
-      Ver todas las publicaciones →
-    </a>
+    <h2>Últimas publicaciones científicas</h2>
+    <a href="#">Ver todas las publicaciones →</a>
   </div>
 
   <div class="carrusel-outer">
-    <button class="nav-btn prev" onclick="mover(-1)" aria-label="Anterior">&#8592;</button>
-    <div class="carrusel-track" id="carrusel"></div>
-    <button class="nav-btn next" onclick="mover(1)" aria-label="Siguiente">&#8594;</button>
+    <div class="carrusel-track">
+
+      <div class="card">
+        <div class="card-content">
+          <div class="meta">2026 · ARTÍCULO</div>
+          <h3>Digital workflows for informed decision making in building envelope design</h3>
+          <div class="meta">Autores BIOMA</div>
+          <a href="#">Ver en portal científico →</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-content">
+          <div class="meta">2026 · CONGRESO</div>
+          <h3>Modular Cladding System Design for Active Radiative Cooling</h3>
+          <div class="meta">Autores BIOMA</div>
+          <a href="#">Ver en portal científico →</a>
+        </div>
+      </div>
+
+    </div>
   </div>
 
-  <div class="indicadores" id="indicadores"></div>
+  <div class="indicadores">
+    <span class="activo"></span>
+    <span></span>
+    <span></span>
+  </div>
+
 </section>
-
-<script>
-  const PUBLICACIONES  = [{"titulo": "A consortium of arbuscular mycorrhizal fungi and plant growth-promoting bacteria modulates wine grape ripening and composition under climate change conditions", "anio": "2026.0", "miembros": ["Martínez Lüscher, Johann", "Antolín Bellver, María del Carmen", "Goicoechea Preboste, María Nieves", "Pascual Elizalde, Inmaculada"], "doi": "10.1016/J.FOODRES.2025.118027", "tipo": "Artículo", "url": "https://portalcientifico.unav.edu/documentos/6959495c0f46d160047a1055", "areas_jci": "Área: FOOD SCIENCE & TECHNOLOGY Cuartil: Q1 Posición en el área: 11/182 |"}, {"titulo": "Cyclodextrin-in-Liposome for therapy: Advances and challenges", "anio": "2026.0", "miembros": ["González Gaitano, Gustavo"], "doi": "10.1016/J.CARBPOL.2025.124573", "tipo": "Revisión", "url": "https://portalcientifico.unav.edu/documentos/690fb0429d779071e7cc38f3", "areas_jci": "Área: CHEMISTRY, ORGANIC Cuartil: Q1 Posición en el área: 1/57 | Área: CHEMISTRY, APPLIED Cuartil: Q1 Posición en el área: 1/77 | Área: POLYMER SCIENCE Cuartil: Q1 Posición en el área: 1/94 |"}, {"titulo": "Digital workflows for informed decision making in building envelope design: A systematic literature review", "anio": "2026.0", "miembros": ["Monge Barrio, Aurora"], "doi": "10.1016/J.ASOC.2025.114377", "tipo": "Artículo", "url": "https://portalcientifico.unav.edu/documentos/694706aa221f004fbfa3c13a", "areas_jci": "Área: COMPUTER SCIENCE, INTERDISCIPLINARY APPLICATIONS Cuartil: Q1 Posición en el área: 36/177 | Área: COMPUTER SCIENCE, ARTIFICIAL INTELLIGENCE Cuartil: Q1 Posición en el área: 34/204 |"}, {"titulo": "Modular Cladding System Design for Active Radiative Cooling in Buildings", "anio": "2026.0", "miembros": ["Zuazua Ros, Amaia", "Martín Gómez, César"], "doi": "10.1007/978-981-96-5069-9_19", "tipo": "Aportación congreso", "url": "https://portalcientifico.unav.edu/documentos/690fb0279d779071e7cc2eed", "areas_jci": ""}, {"titulo": "Bioadsorbents for the Removal of Pollutants in Wastewater: Adsorption Kinetics, Validation Test Using Methylene Blue and Methyl Orange", "anio": "2026.0", "miembros": ["Peñas Esteban, Francisco Javier"], "doi": "10.3390/APP16031512", "tipo": "Artículo", "url": "https://portalcientifico.unav.edu/documentos/69a3b170c355ec16584b661a", "areas_jci": "Área: CHEMISTRY, MULTIDISCIPLINARY Cuartil: Q2 Posición en el área: 112/241 | Área: ENGINEERING, MULTIDISCIPLINARY Cuartil: Q2 Posición en el área: 68/179 | Área: MATERIALS SCIENCE, MULTIDISCIPLINARY Cuartil: Q3 Posición en el área: 250/463 | Área: PHYSICS, APPLIED Cuartil: Q3 Posición en el área: 94/187 |"}, {"titulo": "From headlines to databases: leveraging LLMs for structured disaster event extraction", "anio": "2026.0", "miembros": ["De Villar Rosety, Fernando María", "Labaka Zubieta, Leire", "Hernantes Apezetxea, Josune"], "doi": "10.1007/S41060-025-01017-1", "tipo": "Artículo", "url": "https://portalcientifico.unav.edu/documentos/69a3b19ac355ec16584b71de", "areas_jci": "Área: COMPUTER SCIENCE, ARTIFICIAL INTELLIGENCE Cuartil: Q3 Posición en el área: 119/204 | Área: COMPUTER SCIENCE, INFORMATION SYSTEMS Cuartil: Q3 Posición en el área: 148/258 |"}, {"titulo": "La comunicación como mediación ambientalentre el colapso y el cuidado", "anio": "2026.0", "miembros": ["Erviti Ilundain, María Carmen"], "doi": "10.6035/ADCOMUNICA.9390", "tipo": "Artículo", "url": "https://portalcientifico.unav.edu/documentos/699395fcf5de541337bbc162", "areas_jci": "Área: COMMUNICATION Cuartil: Q3 Posición en el área: 170/229 |"}, {"titulo": "Modelling the Transference of Paediatric Patients with Inborn Errors of Metabolism to Adult Hospitals: Clinical Experience", "anio": "2026.0", "miembros": ["Lasheras Adot, María Esther"], "doi": "10.3390/JCM15010081", "tipo": "Artículo", "url": "https://portalcientifico.unav.edu/documentos/6987d9a171f47e7e0ac11647", "areas_jci": "Área: MEDICINE, GENERAL & INTERNAL Cuartil: Q1 Posición en el área: 59/333 |"}, {"titulo": "Pentamidine-Functionalized Polycaprolactone Nanofibers Produced by Solution Blow Spinning for Controlled Release in Cutaneous Leishmaniasis Treatment", "anio": "2026.0", "miembros": ["Guembe-Michel,N.", "González Gaitano, Gustavo"], "doi": "10.3390/POLYM18020170", "tipo": "Artículo", "url": "https://portalcientifico.unav.edu/documentos/69913b7e6b2b380f4b777c06", "areas_jci": "Área: POLYMER SCIENCE Cuartil: Q1 Posición en el área: 17/94 |"}, {"titulo": "Pluronic® F127 Polymeric Micelles as Nanocarriers for Pentamidine: Improving Safety and Biological Efficacy Against Leishmania major", "anio": "2026.0", "miembros": ["González Gaitano, Gustavo"], "doi": "10.3390/IJMS27031300", "tipo": "Artículo", "url": "https://portalcientifico.unav.edu/documentos/69a3b19ac355ec16584b71f3", "areas_jci": "Área: BIOCHEMISTRY & MOLECULAR BIOLOGY Cuartil: Q2 Posición en el área: 133/321 | Área: CHEMISTRY, MULTIDISCIPLINARY Cuartil: Q2 Posición en el área: 84/241 |"}, {"titulo": "Priority areas for arthropod conservation in the Iberian Peninsula and Balearic Islands: Insights from a multi-taxon distributional database", "anio": "2026.0", "miembros": ["Ariño Plana, Arturo", "Baquero Martín, Enrique", "Galicia Paredes, David"], "doi": "10.1111/ICAD.70060", "tipo": "Artículo", "url": "https://portalcientifico.unav.edu/documentos/69913aef6b2b380f4b7768e9", "areas_jci": "Área: ENTOMOLOGY Cuartil: Q1 Posición en el área: 16/110 |"}, {"titulo": "Spanish Translation, Cultural Adaptation and Validation of the Person-Centred Practice Inventory-Care (PCPI-C): Enhancing Collaborative Care and Patient Involvement", "anio": "2026.0", "miembros": ["Gamero Salinas, Juan Carlos"], "doi": "10.1111/JAN.70542", "tipo": "Artículo", "url": "https://portalcientifico.unav.edu/documentos/69a3b253c355ec16584b8fb7", "areas_jci": "Área: NURSING Cuartil: Q1 Posición en el área: 12/193 |"}, {"titulo": "The comet assay as a tool in human biomonitoring exposure to combustion-derived air pollution − A systematic review and meta-analysis", "anio": "2026.0", "miembros": ["Azqueta Oscoz, Amaya"], "doi": "10.1016/J.MRREV.2025.108583", "tipo": "Revisión", "url": "https://portalcientifico.unav.edu/documentos/697e9e2c4f95b66d0e7b54d6", "areas_jci": "Área: TOXICOLOGY Cuartil: Q1 Posición en el área: 24/106 | Área: BIOTECHNOLOGY & APPLIED MICROBIOLOGY Cuartil: Q1 Posición en el área: 35/177 | Área: GENETICS & HEREDITY Cuartil: Q2 Posición en el área: 49/192 |"}, {"titulo": "The comet assay as a tool in human biomonitoring exposure to volatile organic compounds – A systematic review and meta-analysis", "anio": "2026.0", "miembros": ["Azqueta Oscoz, Amaya"], "doi": "10.1016/J.MRREV.2025.108584", "tipo": "Revisión", "url": "https://portalcientifico.unav.edu/documentos/697e9e2c4f95b66d0e7b54d3", "areas_jci": "Área: TOXICOLOGY Cuartil: Q1 Posición en el área: 24/106 | Área: BIOTECHNOLOGY & APPLIED MICROBIOLOGY Cuartil: Q1 Posición en el área: 35/177 | Área: GENETICS & HEREDITY Cuartil: Q2 Posición en el área: 49/192 |"}, {"titulo": "Towards a harmonized database of indoor air contaminant concentrations: Methods and application to CO2", "anio": "2026.0", "miembros": ["Monge Barrio, Aurora"], "doi": "10.1016/J.BUILDENV.2026.114297", "tipo": "Artículo", "url": "https://portalcientifico.unav.edu/documentos/69913b7d6b2b380f4b777bf1", "areas_jci": "Área: CONSTRUCTION & BUILDING TECHNOLOGY Cuartil: Q1 Posición en el área: 13/95 | Área: ENGINEERING, ENVIRONMENTAL Cuartil: Q1 Posición en el área: 12/83 | Área: ENGINEERING, CIVIL Cuartil: Q1 Posición en el área: 18/185 |"}];
-  const CARDS_VISIBLES = 3;
-  const CARD_WIDTH     = 320 + 24;
-  const AUTOPLAY_MS    = 6000;
-
-  let posicion      = 0;
-  let autoplayTimer = null;
-
-  function renderCarrusel() {
-    document.getElementById("carrusel").innerHTML = PUBLICACIONES.map(p => {
-      const miembros = Array.isArray(p.miembros) ? p.miembros.join(", ") : (p.miembros || "");
-      const enlace   = p.url || null;
-      return `
-        <article class="card">
-          <div class="card-top-bar"></div>
-          <div class="card-body">
-            <div class="card-meta">
-              <span class="card-anio">${p.anio ? parseInt(p.anio) : "—"}</span>
-              ${p.tipo ? `<span class="card-tipo">${p.tipo}</span>` : ""}
-            </div>
-            <h3 class="card-titulo">${p.titulo || "Sin título"}</h3>
-            ${miembros ? `
-              <p class="card-autores-label">Autores BIOMA</p>
-              <p class="card-autores">${miembros}</p>
-            ` : ""}
-          </div>
-          <div class="card-footer">
-            ${enlace
-              ? `<a class="card-link" href="${enlace}" target="_blank" rel="noopener">
-                   Ver en portal científico <span class="card-link-arrow">→</span>
-                 </a>`
-              : `<span class="card-sin-enlace">Enlace no disponible</span>`
-            }
-          </div>
-        </article>
-      `;
-    }).join("");
-  }
-
-  function renderIndicadores() {
-    const maxPos = Math.max(0, PUBLICACIONES.length - CARDS_VISIBLES);
-    document.getElementById("indicadores").innerHTML =
-      Array.from({ length: maxPos + 1 }, (_, i) =>
-        `<div class="indicador ${i === 0 ? "activo" : ""}" onclick="irA(${i})"></div>`
-      ).join("");
-  }
-
-  function mover(dir) {
-    const maxPos = Math.max(0, PUBLICACIONES.length - CARDS_VISIBLES);
-    posicion     = Math.min(Math.max(posicion + dir, 0), maxPos);
-    aplicar(); reiniciarAutoplay();
-  }
-
-  function irA(idx) { posicion = idx; aplicar(); reiniciarAutoplay(); }
-
-  function aplicar() {
-    document.getElementById("carrusel").scrollLeft = posicion * CARD_WIDTH;
-    document.querySelectorAll(".indicador").forEach((el, i) =>
-      el.classList.toggle("activo", i === posicion)
-    );
-  }
-
-  function iniciarAutoplay() {
-    autoplayTimer = setInterval(() => {
-      const maxPos = Math.max(0, PUBLICACIONES.length - CARDS_VISIBLES);
-      posicion     = posicion >= maxPos ? 0 : posicion + 1;
-      aplicar();
-    }, AUTOPLAY_MS);
-  }
-
-  function reiniciarAutoplay() { clearInterval(autoplayTimer); iniciarAutoplay(); }
-
-  renderCarrusel();
-  renderIndicadores();
-  iniciarAutoplay();
-</script>
 
 </body>
 </html>

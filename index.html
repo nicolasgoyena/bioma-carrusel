@@ -182,206 +182,25 @@
 <script>
   const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/1tMv-ttzHwAf3ig7FYrpT2cBZxDDrz4gVSJ4EChf6nz0/export?format=csv&gid=61576899";
 
-  const GAP = 28;
-  const CARD_W = 360;
-  const STEP = CARD_W + GAP;
-  const SPEED_PX_PER_S = 60;
-
-  let PUBLICACIONES = [];
-  let items = [];
-  let offset = 0;
-  let paused = false;
-  let lastTs = null;
-  let rafId = null;
-  let totalWidth = 0;
-
-  function csvLineToArray(line) {
-    const result = [];
-    let current = "";
-    let inQuotes = false;
-
-    for (let i = 0; i < line.length; i++) {
-      const char = line[i];
-      const next = line[i + 1];
-
-      if (char === '"') {
-        if (inQuotes && next === '"') {
-          current += '"';
-          i++;
-        } else {
-          inQuotes = !inQuotes;
-        }
-      } else if (char === "," && !inQuotes) {
-        result.push(current);
-        current = "";
-      } else {
-        current += char;
-      }
-    }
-    result.push(current);
-    return result;
-  }
-
-  function parseCSV(text) {
-    const lines = text
-      .replace(/\r\n/g, "\n")
-      .replace(/\r/g, "\n")
-      .split("\n")
-      .filter(line => line.trim() !== "");
-
-    if (!lines.length) return [];
-
-    const headers = csvLineToArray(lines[0]).map(h => h.trim());
-
-    return lines.slice(1).map(line => {
-      const values = csvLineToArray(line);
-      const obj = {};
-      headers.forEach((h, i) => {
-        obj[h] = (values[i] || "").trim();
-      });
-      return obj;
-    });
-  }
-
-  function normalizarFila(row) {
-    const miembrosRaw = row.miembros || row.Miembros || row.autores || row.Autores BIOMA || "";
-    let miembros = [];
-
-    if (miembrosRaw) {
-      miembros = miembrosRaw
-        .split(/[,;]\s*/)
-        .map(x => x.trim())
-        .filter(Boolean);
-    }
-
-    return {
-      titulo: row.titulo || row.Titulo || "Sin título",
-      anio: row.anio || row.Año || row.Anio || "",
-      miembros: miembros,
-      doi: row.doi || row.DOI || "",
-      tipo: row.tipo || row.Tipo || "",
-      url: row.url || row.URL || row.enlace || row.Enlace || "",
-      areas_jci: row.areas_jci || row["Áreas JCI"] || ""
-    };
-  }
-
-  function crearCard(p) {
-    const miembros = Array.isArray(p.miembros) ? p.miembros.join(", ") : (p.miembros || "");
-    const enlace = p.url || null;
-
-    const article = document.createElement("article");
-    article.className = "card";
-    article.innerHTML = `
-      <div class="card-top-bar"></div>
-      <div class="card-body">
-        <div class="card-meta">
-          <span class="card-anio">${p.anio ? parseInt(p.anio) || p.anio : "—"}</span>
-          ${p.tipo ? `<span class="card-tipo">${p.tipo}</span>` : ""}
-        </div>
-        <h3 class="card-titulo">${p.titulo || "Sin título"}</h3>
-        ${miembros ? `
-          <p class="card-autores-label">Autores BIOMA</p>
-          <p class="card-autores">${miembros}</p>
-        ` : ""}
-      </div>
-      <div class="card-footer">
-        ${enlace
-          ? `<a class="card-link" href="${enlace}" target="_blank" rel="noopener">
-               Ver en portal científico <span class="card-link-arrow">→</span>
-             </a>`
-          : `<span class="card-sin-enlace">Enlace no disponible</span>`
-        }
-      </div>
-    `;
-    return article;
-  }
-
-  function renderCarrusel() {
-    const track = document.getElementById("carrusel");
-    track.innerHTML = "";
-
-    if (!PUBLICACIONES.length) {
-      track.innerHTML = `<p style="padding: 0 48px;">No hay publicaciones disponibles.</p>`;
-      return;
-    }
-
-    const all = [...PUBLICACIONES, ...PUBLICACIONES, ...PUBLICACIONES];
-    items = [];
-
-    all.forEach(p => {
-      const card = crearCard(p);
-      track.appendChild(card);
-      items.push(card);
-    });
-
-    totalWidth = PUBLICACIONES.length * STEP;
-    offset = totalWidth;
-    track.style.transform = `translateX(${-offset}px)`;
-  }
-
-  function tick(ts) {
-    if (!PUBLICACIONES.length) {
-      rafId = requestAnimationFrame(tick);
-      return;
-    }
-
-    if (!paused) {
-      if (lastTs !== null) {
-        const delta = ts - lastTs;
-        offset += (SPEED_PX_PER_S * delta) / 1000;
-
-        if (offset >= totalWidth * 2) offset -= totalWidth;
-        if (offset < totalWidth) offset += totalWidth;
-
-        document.getElementById("carrusel").style.transform = `translateX(${-offset}px)`;
-      }
-      lastTs = ts;
-    } else {
-      lastTs = null;
-    }
-
-    rafId = requestAnimationFrame(tick);
-  }
-
-  async function cargarPublicaciones() {
-    const cacheBust = `t=${Date.now()}`;
-    const url = SHEET_CSV_URL.includes("?")
-      ? `${SHEET_CSV_URL}&${cacheBust}`
-      : `${SHEET_CSV_URL}?${cacheBust}`;
-
-    const response = await fetch(url, { cache: "no-store" });
-    if (!response.ok) {
-      throw new Error(`Error cargando Google Sheets: ${response.status}`);
-    }
-
-    const csvText = await response.text();
-    const rows = parseCSV(csvText);
-    PUBLICACIONES = rows.map(normalizarFila).filter(p => p.titulo && p.titulo !== "Sin título");
-  }
-
-  async function iniciar() {
-    const outer = document.getElementById("carrusel-outer");
-
-    outer.addEventListener("mouseenter", () => { paused = true; });
-    outer.addEventListener("mouseleave", () => { paused = false; });
-    outer.addEventListener("touchstart", () => { paused = true; }, { passive: true });
-    outer.addEventListener("touchend", () => {
-      setTimeout(() => { paused = false; }, 2000);
-    });
-
+  async function testCSV() {
     try {
-      await cargarPublicaciones();
-      renderCarrusel();
-    } catch (error) {
-      console.error(error);
-      document.getElementById("carrusel").innerHTML =
-        `<p style="padding: 0 48px;">No se pudieron cargar las publicaciones.</p>`;
-    }
+      const res = await fetch(SHEET_CSV_URL + "&t=" + Date.now(), { cache: "no-store" });
+      const text = await res.text();
 
-    rafId = requestAnimationFrame(tick);
+      console.log("STATUS:", res.status);
+      console.log("PRIMEROS 500 CARACTERES:");
+      console.log(text.slice(0, 500));
+
+      document.getElementById("carrusel").innerHTML =
+        `<p style="padding:20px 48px;">CSV cargado. Mira la consola del navegador (F12).</p>`;
+    } catch (e) {
+      console.error(e);
+      document.getElementById("carrusel").innerHTML =
+        `<p style="padding:20px 48px;">Error cargando CSV: ${e.message}</p>`;
+    }
   }
 
-  iniciar();
+  testCSV();
 </script>
 
 </body>

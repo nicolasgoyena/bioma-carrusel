@@ -328,6 +328,18 @@
     console.log("Columnas detectadas:", parsed.meta.fields);
     console.log("Primeras filas:", parsed.data.slice(0, 3));
 
+    const filtradas = parsed.data.filter(row => {
+      const tipo = (row["Tipo de publicación"] || "").toLowerCase();
+    
+      // excluir basura
+      if (tipo.includes("erratum")) return false;
+      if (tipo.includes("corrigendum")) return false;
+      if (tipo.includes("editorial")) return false;
+    
+      return true;
+    });
+
+
     PUBLICACIONES = agruparPublicaciones(parsed.data).slice(0, 15);
 
     console.log("Publicaciones agrupadas:", PUBLICACIONES.length);

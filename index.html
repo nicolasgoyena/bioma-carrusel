@@ -328,7 +328,7 @@
     console.log("Columnas detectadas:", parsed.meta.fields);
     console.log("Primeras filas:", parsed.data.slice(0, 3));
 
-    PUBLICACIONES = agruparPublicaciones(parsed.data).slice(0, 25);
+    PUBLICACIONES = agruparPublicaciones(parsed.data).slice(0, 15);
 
     console.log("Publicaciones agrupadas:", PUBLICACIONES.length);
     console.log("Primeras publicaciones agrupadas:", PUBLICACIONES.slice(0, 3));

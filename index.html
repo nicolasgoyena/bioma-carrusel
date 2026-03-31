@@ -179,28 +179,183 @@
   <div class="indicadores" id="indicadores"></div>
 </section>
 
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+
 <script>
   const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/1tMv-ttzHwAf3ig7FYrpT2cBZxDDrz4gVSJ4EChf6nz0/export?format=csv&gid=61576899";
 
-  async function testCSV() {
-    try {
-      const res = await fetch(SHEET_CSV_URL + "&t=" + Date.now(), { cache: "no-store" });
-      const text = await res.text();
+  const GAP = 28;
+  const CARD_W = 360;
+  const STEP = CARD_W + GAP;
+  const SPEED_PX_PER_S = 60;
 
-      console.log("STATUS:", res.status);
-      console.log("PRIMEROS 500 CARACTERES:");
-      console.log(text.slice(0, 500));
+  let PUBLICACIONES = [];
+  let offset = 0;
+  let paused = false;
+  let lastTs = null;
+  let rafId = null;
+  let totalWidth = 0;
 
-      document.getElementById("carrusel").innerHTML =
-        `<p style="padding:20px 48px;">CSV cargado. Mira la consola del navegador (F12).</p>`;
-    } catch (e) {
-      console.error(e);
-      document.getElementById("carrusel").innerHTML =
-        `<p style="padding:20px 48px;">Error cargando CSV: ${e.message}</p>`;
-    }
+  function crearCard(p) {
+    const miembros = Array.isArray(p.miembros) ? p.miembros.join(", ") : (p.miembros || "");
+    const enlace = p.url || null;
+
+    const article = document.createElement("article");
+    article.className = "card";
+    article.innerHTML = `
+      <div class="card-top-bar"></div>
+      <div class="card-body">
+        <div class="card-meta">
+          <span class="card-anio">${p.anio ? parseInt(p.anio) || p.anio : "—"}</span>
+          ${p.tipo ? `<span class="card-tipo">${p.tipo}</span>` : ""}
+        </div>
+        <h3 class="card-titulo">${p.titulo || "Sin título"}</h3>
+        ${miembros ? `
+          <p class="card-autores-label">Autores BIOMA</p>
+          <p class="card-autores">${miembros}</p>
+        ` : ""}
+      </div>
+      <div class="card-footer">
+        ${enlace
+          ? `<a class="card-link" href="${enlace}" target="_blank" rel="noopener">
+               Ver en portal científico <span class="card-link-arrow">→</span>
+             </a>`
+          : `<span class="card-sin-enlace">Enlace no disponible</span>`
+        }
+      </div>
+    `;
+    return article;
   }
 
-  testCSV();
+  function mostrarMensaje(msg) {
+    document.getElementById("carrusel").innerHTML =
+      `<p style="padding:20px 48px;">${msg}</p>`;
+  }
+
+  function agruparPublicaciones(rows) {
+    const mapa = new Map();
+
+    rows.forEach(row => {
+      const titulo = (row["Título"] || "").trim();
+      const id = (row["ID"] || "").trim();
+      const url = (row["URL"] || "").trim();
+      const anio = (row["Año de publicación"] || "").trim();
+      const tipo = (row["Tipo de publicación"] || "").trim();
+      const doi = (row["DOI"] || "").trim();
+      const miembro = (row["Miembro"] || "").trim();
+
+      if (!titulo) return;
+
+      const clave = id || url || titulo;
+
+      if (!mapa.has(clave)) {
+        mapa.set(clave, {
+          titulo: titulo,
+          anio: anio,
+          tipo: tipo,
+          doi: doi,
+          url: url,
+          miembros: []
+        });
+      }
+
+      const pub = mapa.get(clave);
+
+      if (miembro && !pub.miembros.includes(miembro)) {
+        pub.miembros.push(miembro);
+      }
+    });
+
+    return Array.from(mapa.values())
+      .sort((a, b) => {
+        const ay = parseInt(a.anio) || 0;
+        const by = parseInt(b.anio) || 0;
+        return by - ay;
+      });
+  }
+
+  function renderCarrusel() {
+    const track = document.getElementById("carrusel");
+    track.innerHTML = "";
+
+    if (!PUBLICACIONES.length) {
+      mostrarMensaje("No hay publicaciones disponibles.");
+      return;
+    }
+
+    const all = [...PUBLICACIONES, ...PUBLICACIONES, ...PUBLICACIONES];
+    all.forEach(p => track.appendChild(crearCard(p)));
+
+    totalWidth = PUBLICACIONES.length * STEP;
+    offset = totalWidth;
+    track.style.transform = `translateX(${-offset}px)`;
+  }
+
+  function tick(ts) {
+    if (PUBLICACIONES.length && !paused) {
+      if (lastTs !== null) {
+        const delta = ts - lastTs;
+        offset += (SPEED_PX_PER_S * delta) / 1000;
+
+        if (offset >= totalWidth * 2) offset -= totalWidth;
+        if (offset < totalWidth) offset += totalWidth;
+
+        document.getElementById("carrusel").style.transform = `translateX(${-offset}px)`;
+      }
+      lastTs = ts;
+    } else {
+      lastTs = null;
+    }
+
+    rafId = requestAnimationFrame(tick);
+  }
+
+  async function cargarPublicaciones() {
+    const url = SHEET_CSV_URL + "&t=" + Date.now();
+    const response = await fetch(url, { cache: "no-store" });
+
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+
+    const text = await response.text();
+
+    const parsed = Papa.parse(text, {
+      header: true,
+      skipEmptyLines: true
+    });
+
+    console.log("Columnas detectadas:", parsed.meta.fields);
+    console.log("Primeras filas:", parsed.data.slice(0, 3));
+
+    PUBLICACIONES = agruparPublicaciones(parsed.data);
+
+    console.log("Publicaciones agrupadas:", PUBLICACIONES.length);
+    console.log("Primeras publicaciones agrupadas:", PUBLICACIONES.slice(0, 3));
+  }
+
+  async function iniciar() {
+    const outer = document.getElementById("carrusel-outer");
+
+    outer.addEventListener("mouseenter", () => { paused = true; });
+    outer.addEventListener("mouseleave", () => { paused = false; });
+    outer.addEventListener("touchstart", () => { paused = true; }, { passive: true });
+    outer.addEventListener("touchend", () => {
+      setTimeout(() => { paused = false; }, 2000);
+    });
+
+    try {
+      await cargarPublicaciones();
+      renderCarrusel();
+    } catch (err) {
+      console.error(err);
+      mostrarMensaje("Error al cargar publicaciones: " + err.message);
+    }
+
+    rafId = requestAnimationFrame(tick);
+  }
+
+  iniciar();
 </script>
 
 </body>

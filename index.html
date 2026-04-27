@@ -4,7 +4,7 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Últimas Publicaciones Científicas - BIOMA</title>
-  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet"/>
   <style>
     :root {
       --verde:      #3ab549;
@@ -15,117 +15,145 @@
       --gris-light: #f4f4f4;
       --blanco:     #ffffff;
       --borde:      #e0e0e0;
-      --font-title: 'Libre Baskerville', Georgia, serif;
-      --font-body:  'Source Sans 3', Arial, sans-serif;
+      --font-title: 'Playfair Display', serif;
+      --font-body: 'Roboto', sans-serif;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      width: 100vw;
+      overflow-x: hidden;
+      background: transparent;
+    }
+
     body {
       font-family: var(--font-body);
-      background: var(--gris-light);
-      padding: 60px 24px;
+      background: transparent;
+      padding: 60px 0;
       color: var(--gris-text);
+      /* Rompe el max-container del padre Liferay */
+      position: relative;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100vw;
     }
-    .bioma-publicaciones { max-width: 1140px; margin: 0 auto; }
+
+    .bioma-publicaciones { width: 100vw; }
+
     .bioma-header {
       display: flex; align-items: flex-end; justify-content: space-between;
       margin-bottom: 36px; gap: 16px; flex-wrap: wrap;
+      padding: 0 48px;
     }
     .bioma-eyebrow {
-      font-family: var(--font-body); font-size: 0.72rem; font-weight: 700;
+      font-family: var(--font-body); font-size: 0.82rem; font-weight: 700;
       letter-spacing: 2.5px; text-transform: uppercase; color: var(--verde); margin-bottom: 8px;
     }
     .bioma-titulo {
-      font-family: var(--font-title); font-size: 2rem; font-weight: 700;
+      font-family: var(--font-title); font-size: 2.4rem; font-weight: 700;
       color: var(--gris-text); line-height: 1.2;
     }
     .bioma-ver-todas {
-      font-family: var(--font-body); font-size: 0.8rem; font-weight: 700;
+      font-family: var(--font-body); font-size: 0.9rem; font-weight: 700;
       letter-spacing: 1.5px; text-transform: uppercase; color: var(--verde-dark);
       text-decoration: none; border-bottom: 2px solid var(--verde);
       padding-bottom: 2px; transition: color 0.2s; white-space: nowrap;
     }
     .bioma-ver-todas:hover { color: var(--verde); }
-    .carrusel-outer { position: relative; }
+
+    .carrusel-outer {
+      position: relative;
+      overflow: hidden;
+      width: 100%;
+    }
+
     .carrusel-track {
-      display: flex; gap: 24px; overflow: hidden;
-      scroll-behavior: smooth; padding: 12px 4px 20px;
+      display: flex;
+      gap: 28px;
+      padding: 12px 48px 20px;
+      will-change: transform;
     }
+
     .card {
-      min-width: 320px; max-width: 320px; background: var(--blanco);
-      border-radius: 10px; box-shadow: 0 2px 16px rgba(0,0,0,0.08);
-      display: flex; flex-direction: column; overflow: hidden;
-      transition: transform 0.25s, box-shadow 0.25s; flex-shrink: 0;
+      min-width: 360px;
+      max-width: 360px;
+      background: var(--blanco);
+      border-radius: 10px;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      transition: transform 0.25s, box-shadow 0.25s;
+      flex-shrink: 0;
     }
-    .card:hover { transform: translateY(-4px); box-shadow: 0 8px 28px rgba(0,0,0,0.13); }
-    .card-top-bar { height: 4px; background: var(--verde); flex-shrink: 0; }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 28px rgba(0,0,0,0.13);
+    }
+    .card-top-bar { height: 5px; background: var(--verde); flex-shrink: 0; }
     .card-body {
-      padding: 20px 20px 12px; flex: 1;
-      display: flex; flex-direction: column; gap: 10px;
+      padding: 22px 22px 14px; flex: 1;
+      display: flex; flex-direction: column; gap: 12px;
     }
     .card-meta { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
     .card-anio {
-      font-size: 0.72rem; font-weight: 700; letter-spacing: 1.5px;
+      font-size: 0.8rem; font-weight: 700; letter-spacing: 1.5px;
       color: var(--verde-dark); text-transform: uppercase;
     }
     .card-tipo {
-      font-size: 0.68rem; font-weight: 600; color: var(--gris-mid);
+      font-size: 0.74rem; font-weight: 600; color: var(--verde-dark);
       background: var(--verde-pale); border-radius: 30px;
-      padding: 2px 10px; text-transform: uppercase; letter-spacing: 0.8px;
+      padding: 3px 12px; text-transform: uppercase; letter-spacing: 0.8px;
     }
     .card-titulo {
-      font-family: var(--font-title); font-size: 0.95rem; font-weight: 700;
+      font-family: var(--font-title); font-size: 1.05rem; font-weight: 700;
       color: var(--gris-text); line-height: 1.45;
       display: -webkit-box; -webkit-line-clamp: 4;
       -webkit-box-orient: vertical; overflow: hidden;
     }
     .card-autores-label {
-      font-size: 0.65rem; font-weight: 700; letter-spacing: 1.2px;
-      text-transform: uppercase; color: var(--verde); margin-bottom: -4px;
+      font-size: 0.7rem; font-weight: 700; letter-spacing: 1.2px;
+      text-transform: uppercase; color: var(--verde); margin-bottom: -6px;
     }
     .card-autores {
-      font-size: 0.78rem; color: var(--gris-mid); line-height: 1.45;
+      font-size: 0.85rem; color: var(--gris-mid); line-height: 1.45;
       display: -webkit-box; -webkit-line-clamp: 2;
       -webkit-box-orient: vertical; overflow: hidden;
     }
     .card-footer {
-      padding: 12px 20px 18px; border-top: 1px solid var(--borde); margin-top: auto;
+      padding: 14px 22px 20px; border-top: 1px solid var(--borde); margin-top: auto;
     }
     .card-link {
       display: inline-flex; align-items: center; gap: 6px;
-      font-size: 0.75rem; font-weight: 700; letter-spacing: 0.8px;
+      font-size: 0.82rem; font-weight: 700; letter-spacing: 0.8px;
       text-transform: uppercase; color: var(--verde-dark);
       text-decoration: none; transition: color 0.2s, gap 0.2s;
     }
     .card-link:hover { color: var(--verde); gap: 10px; }
     .card-link-arrow { font-size: 1rem; line-height: 1; }
-    .card-sin-enlace { font-size: 0.75rem; color: #bbb; font-style: italic; }
-    .nav-btn {
-      position: absolute; top: 50%; transform: translateY(-50%);
-      width: 44px; height: 44px; border-radius: 50%;
-      border: 2px solid var(--verde); background: var(--blanco); color: var(--verde);
-      font-size: 1.1rem; cursor: pointer; display: flex;
-      align-items: center; justify-content: center; z-index: 10;
-      transition: background 0.2s, color 0.2s;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.10);
-    }
-    .nav-btn:hover { background: var(--verde); color: var(--blanco); }
-    .nav-btn.prev { left: -22px; }
-    .nav-btn.next { right: -22px; }
+    .card-sin-enlace { font-size: 0.78rem; color: #bbb; font-style: italic; }
+
     .indicadores { display: flex; justify-content: center; gap: 7px; margin-top: 28px; }
     .indicador {
       width: 7px; height: 7px; border-radius: 50%; background: #ccc;
       cursor: pointer; transition: background 0.25s, transform 0.25s;
     }
     .indicador.activo { background: var(--verde); transform: scale(1.3); }
+
+    @media (max-width: 1200px) {
+      .card { min-width: 320px; max-width: 320px; }
+    }
     @media (max-width: 900px) {
-      .card { min-width: 280px; max-width: 280px; }
-      .bioma-titulo { font-size: 1.5rem; }
-      .nav-btn.prev { left: -12px; }
-      .nav-btn.next { right: -12px; }
+      .card { min-width: 290px; max-width: 290px; }
+      .bioma-titulo { font-size: 1.8rem; }
+      .bioma-header { padding: 0 24px; }
+      .carrusel-track { padding: 12px 24px 20px; }
     }
     @media (max-width: 600px) {
-      .card { min-width: calc(100vw - 80px); max-width: calc(100vw - 80px); }
+      .card { min-width: calc(100vw - 60px); max-width: calc(100vw - 60px); }
       .bioma-ver-todas { display: none; }
+      .bioma-header { padding: 0 16px; }
+      .carrusel-track { padding: 12px 16px 20px; }
     }
   </style>
 </head>
@@ -135,7 +163,7 @@
   <div class="bioma-header">
     <div class="bioma-header-left">
       <p class="bioma-eyebrow">Instituto BIOMA · UNAV</p>
-      <h2 class="bioma-titulo">Últimas publicaciones científicas</h2>
+      <h2 class="bioma-titulo">Últimas publicaciones</h2>
     </div>
     <a class="bioma-ver-todas"
        href="https://portalcientifico.unav.edu/unidades/22157/publicaciones"
@@ -144,91 +172,202 @@
     </a>
   </div>
 
-  <div class="carrusel-outer">
-    <button class="nav-btn prev" onclick="mover(-1)" aria-label="Anterior">&#8592;</button>
+  <div class="carrusel-outer" id="carrusel-outer">
     <div class="carrusel-track" id="carrusel"></div>
-    <button class="nav-btn next" onclick="mover(1)" aria-label="Siguiente">&#8594;</button>
   </div>
 
   <div class="indicadores" id="indicadores"></div>
 </section>
 
-<script>
-  const PUBLICACIONES  = [{"titulo": "Priority areas for arthropod conservation in the Iberian Peninsula and Balearic Islands: Insights from a multi-taxon distributional database", "anio": "2026.0", "miembros": ["Baquero Martín, Enrique", "Ariño Plana, Arturo", "Galicia Paredes, David"], "doi": "10.1111/ICAD.70060", "tipo": "Artículo", "url": "https://portalcientifico.unav.edu/documentos/69913aef6b2b380f4b7768e9", "areas_jci": "Área: ENTOMOLOGY Cuartil: Q1 Posición en el área: 16/110 |"}, {"titulo": "A consortium of arbuscular mycorrhizal fungi and plant growth-promoting bacteria modulates wine grape ripening and composition under climate change conditions", "anio": "2026.0", "miembros": ["Martínez Lüscher, Johann", "Antolín Bellver, María del Carmen", "Goicoechea Preboste, María Nieves", "Pascual Elizalde, Inmaculada"], "doi": "10.1016/J.FOODRES.2025.118027", "tipo": "Artículo", "url": "https://portalcientifico.unav.edu/documentos/6959495c0f46d160047a1055", "areas_jci": "Área: FOOD SCIENCE & TECHNOLOGY Cuartil: Q1 Posición en el área: 11/182 |"}, {"titulo": "Digital workflows for informed decision making in building envelope design: A systematic literature review", "anio": "2026.0", "miembros": ["Monge Barrio, Aurora"], "doi": "10.1016/J.ASOC.2025.114377", "tipo": "Artículo", "url": "https://portalcientifico.unav.edu/documentos/694706aa221f004fbfa3c13a", "areas_jci": "Área: COMPUTER SCIENCE, INTERDISCIPLINARY APPLICATIONS Cuartil: Q1 Posición en el área: 36/177 | Área: COMPUTER SCIENCE, ARTIFICIAL INTELLIGENCE Cuartil: Q1 Posición en el área: 34/204 |"}, {"titulo": "Modular Cladding System Design for Active Radiative Cooling in Buildings", "anio": "2026.0", "miembros": ["Zuazua Ros, Amaia", "Martín Gómez, César"], "doi": "10.1007/978-981-96-5069-9_19", "tipo": "Aportación congreso", "url": "https://portalcientifico.unav.edu/documentos/690fb0279d779071e7cc2eed", "areas_jci": ""}, {"titulo": "Bioadsorbents for the Removal of Pollutants in Wastewater: Adsorption Kinetics, Validation Test Using Methylene Blue and Methyl Orange", "anio": "2026.0", "miembros": ["Peñas Esteban, Francisco Javier"], "doi": "10.3390/APP16031512", "tipo": "Artículo", "url": "https://portalcientifico.unav.edu/documentos/69a3b170c355ec16584b661a", "areas_jci": "Área: CHEMISTRY, MULTIDISCIPLINARY Cuartil: Q2 Posición en el área: 112/241 | Área: ENGINEERING, MULTIDISCIPLINARY Cuartil: Q2 Posición en el área: 68/179 | Área: MATERIALS SCIENCE, MULTIDISCIPLINARY Cuartil: Q3 Posición en el área: 250/463 | Área: PHYSICS, APPLIED Cuartil: Q3 Posición en el área: 94/187 |"}, {"titulo": "From headlines to databases: leveraging LLMs for structured disaster event extraction", "anio": "2026.0", "miembros": ["De Villar Rosety, Fernando María", "Labaka Zubieta, Leire", "Hernantes Apezetxea, Josune"], "doi": "10.1007/S41060-025-01017-1", "tipo": "Artículo", "url": "https://portalcientifico.unav.edu/documentos/69a3b19ac355ec16584b71de", "areas_jci": "Área: COMPUTER SCIENCE, ARTIFICIAL INTELLIGENCE Cuartil: Q3 Posición en el área: 119/204 | Área: COMPUTER SCIENCE, INFORMATION SYSTEMS Cuartil: Q3 Posición en el área: 148/258 |"}, {"titulo": "La comunicación como mediación ambientalentre el colapso y el cuidado", "anio": "2026.0", "miembros": ["Erviti Ilundain, María Carmen"], "doi": "10.6035/ADCOMUNICA.9390", "tipo": "Artículo", "url": "https://portalcientifico.unav.edu/documentos/699395fcf5de541337bbc162", "areas_jci": "Área: COMMUNICATION Cuartil: Q3 Posición en el área: 170/229 |"}, {"titulo": "The comet assay as a tool in human biomonitoring exposure to combustion-derived air pollution − A systematic review and meta-analysis", "anio": "2026.0", "miembros": ["Azqueta Oscoz, Amaya"], "doi": "10.1016/J.MRREV.2025.108583", "tipo": "Revisión", "url": "https://portalcientifico.unav.edu/documentos/697e9e2c4f95b66d0e7b54d6", "areas_jci": "Área: TOXICOLOGY Cuartil: Q1 Posición en el área: 24/106 | Área: BIOTECHNOLOGY & APPLIED MICROBIOLOGY Cuartil: Q1 Posición en el área: 35/177 | Área: GENETICS & HEREDITY Cuartil: Q2 Posición en el área: 49/192 |"}, {"titulo": "The comet assay as a tool in human biomonitoring exposure to volatile organic compounds – A systematic review and meta-analysis", "anio": "2026.0", "miembros": ["Azqueta Oscoz, Amaya"], "doi": "10.1016/J.MRREV.2025.108584", "tipo": "Revisión", "url": "https://portalcientifico.unav.edu/documentos/697e9e2c4f95b66d0e7b54d3", "areas_jci": "Área: TOXICOLOGY Cuartil: Q1 Posición en el área: 24/106 | Área: BIOTECHNOLOGY & APPLIED MICROBIOLOGY Cuartil: Q1 Posición en el área: 35/177 | Área: GENETICS & HEREDITY Cuartil: Q2 Posición en el área: 49/192 |"}, {"titulo": "Towards a harmonized database of indoor air contaminant concentrations: Methods and application to CO2", "anio": "2026.0", "miembros": ["Monge Barrio, Aurora"], "doi": "10.1016/J.BUILDENV.2026.114297", "tipo": "Artículo", "url": "https://portalcientifico.unav.edu/documentos/69913b7d6b2b380f4b777bf1", "areas_jci": "Área: CONSTRUCTION & BUILDING TECHNOLOGY Cuartil: Q1 Posición en el área: 13/95 | Área: ENGINEERING, ENVIRONMENTAL Cuartil: Q1 Posición en el área: 12/83 | Área: ENGINEERING, CIVIL Cuartil: Q1 Posición en el área: 18/185 |"}, {"titulo": "A BIM–LCA Framework for Whole-Life Carbon Assessment Under EPBD: Scope Alignment, Functional Unit Robustness, and Cross-Tool Validation", "anio": "2026.0", "miembros": ["Fernández Bandera, Carlos"], "doi": "10.3390/APP16062637", "tipo": "Artículo", "url": "https://portalcientifico.unav.edu/documentos/69db0191226b77548f67a607", "areas_jci": "Área: CHEMISTRY, MULTIDISCIPLINARY Cuartil: Q2 Posición en el área: 112/241 | Área: ENGINEERING, MULTIDISCIPLINARY Cuartil: Q2 Posición en el área: 68/179 | Área: MATERIALS SCIENCE, MULTIDISCIPLINARY Cuartil: Q3 Posición en el área: 250/463 | Área: PHYSICS, APPLIED Cuartil: Q3 Posición en el área: 94/187 |"}, {"titulo": "A long-term ecosystem monitoring dataset from the ICP Integrated Monitoring network: biogeochemical data from 1977-2020 across 14 European countries", "anio": "2026.0", "miembros": ["Ibáñez Gastón, Ricardo", "Lasheras Adot, María Esther", "Santamaría Elola, Carolina", "Santamaría Ulecia, Jesús Miguel", "Elustondo Valencia, David"], "doi": "10.1038/S41597-026-07181-8", "tipo": "Artículo", "url": "https://portalcientifico.unav.edu/documentos/69e3b61f25ad817cf843ca70", "areas_jci": "Área: MULTIDISCIPLINARY SCIENCES Cuartil: Q1 Posición en el área: 19/136 |"}, {"titulo": "Azobenzene-bridged ionizable amphiphilic Janus glycosides for light-controlled, single-component and organ-modulable pDNA delivery", "anio": "2026.0", "miembros": ["Vélaz Rivas, Itziar"], "doi": "10.1038/S42004-026-01920-Z", "tipo": "Artículo", "url": "https://portalcientifico.unav.edu/documentos/69db0191226b77548f67a60d", "areas_jci": "Área: CHEMISTRY, MULTIDISCIPLINARY Cuartil: Q1 Posición en el área: 52/241 |"}, {"titulo": "Baseline atmospheric deposition of mercury in a caribbean industrial-coastal area: A case study from Cienfuegos Bay, Cuba", "anio": "2026.0", "miembros": ["Morera Gomez, Yasser"], "doi": "10.1016/J.CHEMOSPHERE.2026.144917", "tipo": "Artículo", "url": "https://portalcientifico.unav.edu/documentos/69db0193226b77548f67a68d", "areas_jci": ""}, {"titulo": "Biogenic Next-Gen CPL Emitters: Strategies with Proteins, Polysaccharides, and Nucleotides", "anio": "2026.0", "miembros": ["González Gaitano, Gustavo", "Fuenzalida Werner, Juan Pablo"], "doi": "10.1002/ADOM.202502221", "tipo": "Revisión", "url": "https://portalcientifico.unav.edu/documentos/6934915169f8cf470682dbd7", "areas_jci": "Área: OPTICS Cuartil: Q1 Posición en el área: 14/125 | Área: MATERIALS SCIENCE, MULTIDISCIPLINARY Cuartil: Q1 Posición en el área: 53/463 |"}, {"titulo": "Cluster Analysis of Circular Economy and Industrial Symbiosis Practices and Their Impact on Sustainability Performance in the Plastics Industry", "anio": "2026.0", "miembros": ["Jaca García, Carmen", "Ormazábal Goenaga, Marta"], "doi": "10.1002/BSE.70807", "tipo": "Artículo", "url": "https://portalcientifico.unav.edu/documentos/69db0253226b77548f67c138", "areas_jci": "Área: BUSINESS Cuartil: Q1 Posición en el área: 4/317 | Área: ENVIRONMENTAL STUDIES Cuartil: Q1 Posición en el área: 4/193 | Área: MANAGEMENT Cuartil: Q1 Posición en el área: 7/421 |"}, {"titulo": "Contrasting CO2-response strategies in Pardina lentils: Yield maximization in a commercial cultivar and seed composition adjustment in a landrace", "anio": "2026.0", "miembros": ["Goicoechea Preboste, María Nieves", "Martínez Lüscher, Johann"], "doi": "10.1002/JSFA.70608", "tipo": "Artículo", "url": "https://portalcientifico.unav.edu/documentos/69db024a226b77548f67beca", "areas_jci": "Área: AGRICULTURE, MULTIDISCIPLINARY Cuartil: Q1 Posición en el área: 23/95 | Área: CHEMISTRY, APPLIED Cuartil: Q2 Posición en el área: 25/77 | Área: FOOD SCIENCE & TECHNOLOGY Cuartil: Q2 Posición en el área: 66/182 |"}, {"titulo": "Cyclodextrin-in-Liposome for therapy: Advances and challenges", "anio": "2026.0", "miembros": ["González Gaitano, Gustavo"], "doi": "10.1016/J.CARBPOL.2025.124573", "tipo": "Revisión", "url": "https://portalcientifico.unav.edu/documentos/690fb0429d779071e7cc38f3", "areas_jci": "Área: CHEMISTRY, ORGANIC Cuartil: Q1 Posición en el área: 1/57 | Área: CHEMISTRY, APPLIED Cuartil: Q1 Posición en el área: 1/77 | Área: POLYMER SCIENCE Cuartil: Q1 Posición en el área: 1/94 |"}, {"titulo": "Fishbone-Derived Hydroxyapatite from Distinct Species: Effect of Calcination and pH on Heavy Metal Adsorption from Water", "anio": "2026.0", "miembros": ["Peñas Esteban, Francisco Javier", "Durán Benito, Adrián"], "doi": "10.3390/ENVIRONMENTS13020102", "tipo": "Artículo", "url": "https://portalcientifico.unav.edu/documentos/69b610ec7b66766ff3dbd72f", "areas_jci": "Área: ENVIRONMENTAL SCIENCES Cuartil: Q3 Posición en el área: 206/376 |"}, {"titulo": "Fluorescent proteins: A journey from the cell to extreme environments in material science", "anio": "2026.0", "miembros": ["Fuenzalida Werner, Juan Pablo"], "doi": "10.1111/PHP.70011", "tipo": "Revisión", "url": "https://portalcientifico.unav.edu/documentos/688e54da06a0c57814c5eb9f", "areas_jci": "Área: BIOCHEMISTRY & MOLECULAR BIOLOGY Cuartil: Q3 Posición en el área: 206/321 | Área: BIOPHYSICS Cuartil: Q3 Posición en el área: 51/80 |"}, {"titulo": "Microfluidic Fabrication of TiO2–Hydrogel Photocatalytic Composites for Water Treatment", "anio": "2026.0", "miembros": ["Durán Benito, Adrián", "Peñas Esteban, Francisco Javier"], "doi": "10.3390/CRYST16030175", "tipo": "Artículo", "url": "https://portalcientifico.unav.edu/documentos/69db014b226b77548f679147", "areas_jci": "Área: MATERIALS SCIENCE, MULTIDISCIPLINARY Cuartil: Q2 Posición en el área: 176/463 | Área: CRYSTALLOGRAPHY Cuartil: Q2 Posición en el área: 11/31 |"}, {"titulo": "Modelling the Transference of Paediatric Patients with Inborn Errors of Metabolism to Adult Hospitals: Clinical Experience", "anio": "2026.0", "miembros": ["Lasheras Adot, María Esther"], "doi": "10.3390/JCM15010081", "tipo": "Artículo", "url": "https://portalcientifico.unav.edu/documentos/6987d9a171f47e7e0ac11647", "areas_jci": "Área: MEDICINE, GENERAL & INTERNAL Cuartil: Q1 Posición en el área: 59/333 |"}, {"titulo": "Pentamidine-Functionalized Polycaprolactone Nanofibers Produced by Solution Blow Spinning for Controlled Release in Cutaneous Leishmaniasis Treatment", "anio": "2026.0", "miembros": ["González Gaitano, Gustavo"], "doi": "10.3390/POLYM18020170", "tipo": "Artículo", "url": "https://portalcientifico.unav.edu/documentos/69913b7e6b2b380f4b777c06", "areas_jci": "Área: POLYMER SCIENCE Cuartil: Q1 Posición en el área: 17/94 |"}, {"titulo": "Pluronic® F127 Polymeric Micelles as Nanocarriers for Pentamidine: Improving Safety and Biological Efficacy Against Leishmania major", "anio": "2026.0", "miembros": ["González Gaitano, Gustavo"], "doi": "10.3390/IJMS27031300", "tipo": "Artículo", "url": "https://portalcientifico.unav.edu/documentos/69a3b19ac355ec16584b71f3", "areas_jci": "Área: BIOCHEMISTRY & MOLECULAR BIOLOGY Cuartil: Q2 Posición en el área: 133/321 | Área: CHEMISTRY, MULTIDISCIPLINARY Cuartil: Q2 Posición en el área: 84/241 |"}, {"titulo": "Revisiting historical diversity of sawfishes (Pristidae) in the Mediterranean Sea using natural history collections", "anio": "2026.0", "miembros": ["Ariño Plana, Arturo"], "doi": "10.1093/ZOOLINNEAN/ZLAG023", "tipo": "Artículo", "url": "https://portalcientifico.unav.edu/documentos/69b610ea7b66766ff3dbd6bd", "areas_jci": "Área: ZOOLOGY Cuartil: Q1 Posición en el área: 7/182 |"}, {"titulo": "Spanish Translation, Cultural Adaptation and Validation of the Person-Centred Practice Inventory-Care (PCPI-C): Enhancing Collaborative Care and Patient Involvement", "anio": "2026.0", "miembros": ["Gamero Salinas, Juan Carlos"], "doi": "10.1111/JAN.70542", "tipo": "Artículo", "url": "https://portalcientifico.unav.edu/documentos/69a3b253c355ec16584b8fb7", "areas_jci": "Área: NURSING Cuartil: Q1 Posición en el área: 12/193 |"}, {"titulo": "Symbiosis-associated UMAMIT transporters required for establishing efficient nitrogen fixation in Medicago truncatula", "anio": "2026.0", "miembros": ["Zamarreño Arregui, Ángel", "García-Mina Freire, José María"], "doi": "10.1111/NPH.70917", "tipo": "Artículo", "url": "https://portalcientifico.unav.edu/documentos/69b610d77b66766ff3dbd0ec", "areas_jci": "Área: PLANT SCIENCES Cuartil: Q1 Posición en el área: 9/275 |"}, {"titulo": "Tetronic® 1307-Based Polymeric Micelles and Thermoresponsive Gels for the Co-Delivery of Pentamidine and Miltefosine", "anio": "2026.0", "miembros": ["González Gaitano, Gustavo"], "doi": "10.3390/PHARMACEUTICS18020233", "tipo": "Artículo", "url": "https://portalcientifico.unav.edu/documentos/69b610e97b66766ff3dbd678", "areas_jci": "Área: PHARMACOLOGY & PHARMACY Cuartil: Q1 Posición en el área: 47/353 |"}, {"titulo": "The circular economy and the sustainable development goals: Strategies for consumer involvement in the textile industry", "anio": "2026.0", "miembros": ["Jaca García, Carmen"], "doi": "10.1016/J.CLRC.2026.100415", "tipo": "Artículo", "url": "https://portalcientifico.unav.edu/documentos/69b610ea7b66766ff3dbd6a3", "areas_jci": "Área: GREEN & SUSTAINABLE SCIENCE & TECHNOLOGY Cuartil: Q2 Posición en el área: 35/103 | Área: ENVIRONMENTAL STUDIES Cuartil: Q2 Posición en el área: 69/193 | Área: ENVIRONMENTAL SCIENCES Cuartil: Q2 Posición en el área: 97/376 |"}, {"titulo": "The comet assay as a tool in human biomonitoring exposure to anaesthetic gases – A systematic review and meta-analysis", "anio": "2026.0", "miembros": ["Azqueta Oscoz, Amaya"], "doi": "10.1016/J.MRREV.2026.108586", "tipo": "Revisión", "url": "https://portalcientifico.unav.edu/documentos/69b610e97b66766ff3dbd681", "areas_jci": "Área: TOXICOLOGY Cuartil: Q1 Posición en el área: 24/106 | Área: BIOTECHNOLOGY & APPLIED MICROBIOLOGY Cuartil: Q1 Posición en el área: 35/177 | Área: GENETICS & HEREDITY Cuartil: Q2 Posición en el área: 49/192 |"}, {"titulo": "Towards a validation of the standard and enzyme-linked comet assay: a retrospective variability analysis", "anio": "2026.0", "miembros": ["Azqueta Oscoz, Amaya"], "doi": "10.1007/S00204-026-04317-Y", "tipo": "Revisión", "url": "https://portalcientifico.unav.edu/documentos/69db0190226b77548f67a5d4", "areas_jci": "Área: TOXICOLOGY Cuartil: Q1 Posición en el área: 11/106 |"}, {"titulo": "Unraveling the telomere-mitochondrial axis in colorectal cancer: Results from a prospectively followed cohort", "anio": "2026.0", "miembros": ["Azqueta Oscoz, Amaya"], "doi": "10.1186/S10020-026-01423-6", "tipo": "Artículo", "url": "https://portalcientifico.unav.edu/documentos/69db0190226b77548f67a5ce", "areas_jci": "Área: BIOCHEMISTRY & MOLECULAR BIOLOGY Cuartil: Q1 Posición en el área: 52/321 | Área: MEDICINE, RESEARCH & EXPERIMENTAL Cuartil: Q1 Posición en el área: 42/195 | Área: CELL BIOLOGY Cuartil: Q1 Posición en el área: 44/204 |"}, {"titulo": "Weaponizing nutrition: plants use a double strategy to fight herbivory, converting nutritionally essential fatty acids into defensive oxylipin signals", "anio": "2026.0", "miembros": ["Zamarreño Arregui, Ángel", "García-Mina Freire, José María"], "doi": "10.1111/NPH.71155", "tipo": "Artículo", "url": "https://portalcientifico.unav.edu/documentos/69e3b5ec25ad817cf843c373", "areas_jci": "Área: PLANT SCIENCES Cuartil: Q1 Posición en el área: 9/275 |"}];
-  const CARDS_VISIBLES = 3;
-  const CARD_WIDTH     = 320 + 24;
-  const AUTOPLAY_MS    = 6000;
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 
-  let posicion      = 0;
-  let autoplayTimer = null;
+<script>
+  const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/1tMv-ttzHwAf3ig7FYrpT2cBZxDDrz4gVSJ4EChf6nz0/export?format=csv&gid=61576899";
+
+  const GAP = 28;
+  const CARD_W = 360;
+  const STEP = CARD_W + GAP;
+  const SPEED_PX_PER_S = 60;
+
+  let PUBLICACIONES = [];
+  let offset = 0;
+  let paused = false;
+  let lastTs = null;
+  let rafId = null;
+  let totalWidth = 0;
+
+  function crearCard(p) {
+    const miembros = Array.isArray(p.miembros) ? p.miembros.join(", ") : (p.miembros || "");
+    const enlace = p.url || null;
+
+    const article = document.createElement("article");
+    article.className = "card";
+    article.innerHTML = `
+      <div class="card-top-bar"></div>
+      <div class="card-body">
+        <div class="card-meta">
+          <span class="card-anio">${p.anio ? parseInt(p.anio) || p.anio : "—"}</span>
+          ${p.tipo ? `<span class="card-tipo">${p.tipo}</span>` : ""}
+        </div>
+        <h3 class="card-titulo">${p.titulo || "Sin título"}</h3>
+        ${miembros ? `
+          <p class="card-autores-label">Autores BIOMA</p>
+          <p class="card-autores">${miembros}</p>
+        ` : ""}
+      </div>
+      <div class="card-footer">
+        ${enlace
+          ? `<a class="card-link" href="${enlace}" target="_blank" rel="noopener">
+               Ver en portal científico <span class="card-link-arrow">→</span>
+             </a>`
+          : `<span class="card-sin-enlace">Enlace no disponible</span>`
+        }
+      </div>
+    `;
+    return article;
+  }
+
+  function mostrarMensaje(msg) {
+    document.getElementById("carrusel").innerHTML =
+      `<p style="padding:20px 48px;">${msg}</p>`;
+  }
+
+  function agruparPublicaciones(rows) {
+    const mapa = new Map();
+
+    rows.forEach(row => {
+      const titulo = (row["Título"] || "").trim();
+      const id = (row["ID"] || "").trim();
+      const url = (row["URL"] || "").trim();
+      const anio = (row["Año de publicación"] || "").trim();
+      const tipo = (row["Tipo de publicación"] || "").trim();
+      const doi = (row["DOI"] || "").trim();
+      const miembro = (row["Miembro"] || "").trim();
+
+      if (!titulo) return;
+
+      const clave = id || url || titulo;
+
+      if (!mapa.has(clave)) {
+        mapa.set(clave, {
+          titulo: titulo,
+          anio: anio,
+          tipo: tipo,
+          doi: doi,
+          url: url,
+          miembros: []
+        });
+      }
+
+      const pub = mapa.get(clave);
+
+      if (miembro && !pub.miembros.includes(miembro)) {
+        pub.miembros.push(miembro);
+      }
+    });
+
+    return Array.from(mapa.values())
+      .sort((a, b) => {
+        const ay = parseInt(a.anio) || 0;
+        const by = parseInt(b.anio) || 0;
+        return by - ay;
+      });
+  }
 
   function renderCarrusel() {
-    document.getElementById("carrusel").innerHTML = PUBLICACIONES.map(p => {
-      const miembros = Array.isArray(p.miembros) ? p.miembros.join(", ") : (p.miembros || "");
-      const enlace   = p.url || null;
-      return `
-        <article class="card">
-          <div class="card-top-bar"></div>
-          <div class="card-body">
-            <div class="card-meta">
-              <span class="card-anio">${p.anio || "—"}</span>
-              ${p.tipo ? `<span class="card-tipo">${p.tipo}</span>` : ""}
-            </div>
-            <h3 class="card-titulo">${p.titulo || "Sin título"}</h3>
-            ${miembros ? `
-              <p class="card-autores-label">Autores BIOMA</p>
-              <p class="card-autores">${miembros}</p>
-            ` : ""}
-          </div>
-          <div class="card-footer">
-            ${enlace
-              ? `<a class="card-link" href="${enlace}" target="_blank" rel="noopener">
-                   Ver en portal científico <span class="card-link-arrow">→</span>
-                 </a>`
-              : `<span class="card-sin-enlace">Enlace no disponible</span>`
-            }
-          </div>
-        </article>
-      `;
-    }).join("");
+    const track = document.getElementById("carrusel");
+    track.innerHTML = "";
+
+    if (!PUBLICACIONES.length) {
+      mostrarMensaje("No hay publicaciones disponibles.");
+      return;
+    }
+
+    const all = [...PUBLICACIONES, ...PUBLICACIONES, ...PUBLICACIONES];
+    all.forEach(p => track.appendChild(crearCard(p)));
+
+    totalWidth = PUBLICACIONES.length * STEP;
+    offset = totalWidth;
+    track.style.transform = `translateX(${-offset}px)`;
   }
 
-  function renderIndicadores() {
-    const maxPos = Math.max(0, PUBLICACIONES.length - CARDS_VISIBLES);
-    document.getElementById("indicadores").innerHTML =
-      Array.from({ length: maxPos + 1 }, (_, i) =>
-        `<div class="indicador ${i === 0 ? "activo" : ""}" onclick="irA(${i})"></div>`
-      ).join("");
+  function tick(ts) {
+    if (PUBLICACIONES.length && !paused) {
+      if (lastTs !== null) {
+        const delta = ts - lastTs;
+        offset += (SPEED_PX_PER_S * delta) / 1000;
+
+        if (offset >= totalWidth * 2) offset -= totalWidth;
+        if (offset < totalWidth) offset += totalWidth;
+
+        document.getElementById("carrusel").style.transform = `translateX(${-offset}px)`;
+      }
+      lastTs = ts;
+    } else {
+      lastTs = null;
+    }
+
+    rafId = requestAnimationFrame(tick);
   }
 
-  function mover(dir) {
-    const maxPos = Math.max(0, PUBLICACIONES.length - CARDS_VISIBLES);
-    posicion     = Math.min(Math.max(posicion + dir, 0), maxPos);
-    aplicar(); reiniciarAutoplay();
+  async function cargarPublicaciones() {
+    const url = SHEET_CSV_URL + "&t=" + Date.now();
+    const response = await fetch(url, { cache: "no-store" });
+
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+
+    const text = await response.text();
+
+    const parsed = Papa.parse(text, {
+      header: true,
+      skipEmptyLines: true
+    });
+
+    console.log("Columnas detectadas:", parsed.meta.fields);
+    console.log("Primeras filas:", parsed.data.slice(0, 3));
+
+    const filtradas = parsed.data.filter(row => {
+      const tipo = (row["Tipo de publicación"] || "").toLowerCase();
+    
+      // excluir basura
+      if (tipo.includes("erratum")) return false;
+      if (tipo.includes("corrigendum")) return false;
+      if (tipo.includes("editorial")) return false;
+    
+      return true;
+    });
+
+
+    PUBLICACIONES = agruparPublicaciones(parsed.data).slice(0, 15);
+
+    console.log("Publicaciones agrupadas:", PUBLICACIONES.length);
+    console.log("Primeras publicaciones agrupadas:", PUBLICACIONES.slice(0, 3));
   }
 
-  function irA(idx) { posicion = idx; aplicar(); reiniciarAutoplay(); }
+  async function iniciar() {
+    const outer = document.getElementById("carrusel-outer");
 
-  function aplicar() {
-    document.getElementById("carrusel").scrollLeft = posicion * CARD_WIDTH;
-    document.querySelectorAll(".indicador").forEach((el, i) =>
-      el.classList.toggle("activo", i === posicion)
-    );
+    outer.addEventListener("mouseenter", () => { paused = true; });
+    outer.addEventListener("mouseleave", () => { paused = false; });
+    outer.addEventListener("touchstart", () => { paused = true; }, { passive: true });
+    outer.addEventListener("touchend", () => {
+      setTimeout(() => { paused = false; }, 2000);
+    });
+
+    try {
+      await cargarPublicaciones();
+      renderCarrusel();
+    } catch (err) {
+      console.error(err);
+      mostrarMensaje("Error al cargar publicaciones: " + err.message);
+    }
+
+    rafId = requestAnimationFrame(tick);
   }
 
-  function iniciarAutoplay() {
-    autoplayTimer = setInterval(() => {
-      const maxPos = Math.max(0, PUBLICACIONES.length - CARDS_VISIBLES);
-      posicion     = posicion >= maxPos ? 0 : posicion + 1;
-      aplicar();
-    }, AUTOPLAY_MS);
-  }
-
-  function reiniciarAutoplay() { clearInterval(autoplayTimer); iniciarAutoplay(); }
-
-  renderCarrusel();
-  renderIndicadores();
-  iniciarAutoplay();
+  iniciar();
 </script>
 
 </body>

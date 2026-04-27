@@ -340,7 +340,13 @@
     });
 
 
-    PUBLICACIONES = agruparPublicaciones(filtradas).slice(0, 15);
+    const todasAgrupadas = agruparPublicaciones(filtradas);
+    const anioActual = new Date().getFullYear().toString();
+    const delAnioActual = todasAgrupadas.filter(p => p.anio === anioActual);
+    
+    // Mezclar aleatoriamente y coger 15
+    const mezcladas = delAnioActual.sort(() => Math.random() - 0.5);
+    PUBLICACIONES = mezcladas.slice(0, 15);
 
     console.log("Publicaciones agrupadas:", PUBLICACIONES.length);
     console.log("Primeras publicaciones agrupadas:", PUBLICACIONES.slice(0, 3));

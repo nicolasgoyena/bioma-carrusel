@@ -232,6 +232,18 @@
       `<p style="padding:20px 48px;">${msg}</p>`;
   }
 
+  // Convierte "Apellidos, Nombre" → "Nombre Apellidos"
+  // Si el formato no tiene coma (ej. ya está en orden natural), lo deja tal cual.
+  function normalizarNombre(raw) {
+    const partes = raw.split(",");
+    if (partes.length >= 2) {
+      const apellidos = partes[0].trim();
+      const nombre = partes.slice(1).join(",").trim();
+      if (nombre) return nombre + " " + apellidos;
+    }
+    return raw.trim();
+  }
+
   function agruparPublicaciones(rows) {
     const mapa = new Map();
 
@@ -242,7 +254,7 @@
       const anio = (row["Año de publicación"] || "").trim();
       const tipo = (row["Tipo de publicación"] || "").trim();
       const doi = (row["DOI"] || "").trim();
-      const miembro = (row["Miembro"] || "").trim();
+      const miembro = normalizarNombre((row["Miembro"] || "").trim());
 
       if (!titulo) return;
 

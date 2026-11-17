@@ -196,12 +196,8 @@
   let rafId = null;
   let totalWidth = 0;
 
-  const TIPOS_EXCLUIDOS = [
-    "erratum", "corrigendum", "corrección", "correccion", "fe de erratas",
-    "editorial", "retracción", "retraccion", "retraction"
-  ];
-  const PREFIJOS_EXCLUIDOS =
-    /^(correction|corrigendum|erratum|retraction|expression of concern|corrección|correccion|fe de erratas)\b/;
+  // Valores de la columna "Tipo de publicación" que no se muestran en el carrusel
+  const TIPOS_EXCLUIDOS = new Set(["errata", "editorial"]);
 
   // Escapa texto de la hoja antes de meterlo en innerHTML
   function esc(s) {
@@ -355,16 +351,8 @@
     console.log("Primeras filas:", parsed.data.slice(0, 3));
 
     const filtradas = parsed.data.filter(row => {
-      const tipo   = (row["Tipo de publicación"] || "").toLowerCase();
-      const titulo = (row["Título"] || "").toLowerCase().trim();
-
-      // Excluir por tipo (el Portal Científico usa tipos en castellano)
-      if (TIPOS_EXCLUIDOS.some(t => tipo.includes(t))) return false;
-
-      // Erratas/correcciones que vienen tipadas como "Artículo"
-      if (PREFIJOS_EXCLUIDOS.test(titulo)) return false;
-
-      return true;
+      const tipo = (row["Tipo de publicación"] || "").trim().toLowerCase();
+      return !TIPOS_EXCLUIDOS.has(tipo);
     });
 
     const todasAgrupadas = agruparPublicaciones(filtradas);

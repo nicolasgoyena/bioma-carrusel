@@ -187,8 +187,58 @@
   const MAX_PUBLICACIONES = 30;        // máximo de tarjetas entre las dos filas
   const VELOCIDAD_PX_S = 28;           // velocidad de las cintas
   const COLORES = ["#92c3ea", "#babf0a", "#e8e3d9", "#5297d2"];
-  const MESES = ["", "enero", "febrero", "marzo", "abril", "mayo", "junio",
-                 "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
+  // ---- Idioma -------------------------------------------------------------
+  // 1) ?lang=en en la URL del iframe (lo más fiable: se pone en la versión
+  //    inglesa del contenido en Liferay)
+  // 2) si no, la URL de la página que lo incrusta contiene /en/ (solo funciona
+  //    si el navegador manda la ruta completa como referrer)
+  // 3) por defecto, castellano
+  function detectarIdioma() {
+    const param = new URLSearchParams(location.search).get("lang");
+    if (param) return param.toLowerCase().startsWith("en") ? "en" : "es";
+    try {
+      const ref = new URL(document.referrer);
+      if (/^\/en(\/|$)/.test(ref.pathname)) return "en";
+    } catch (e) { /* sin referrer */ }
+    return "es";
+  }
+  const LANG = detectarIdioma();
+
+  const TEXTOS = {
+    es: {
+      titulo: "Lo último de BIOMA",
+      cargando: "Cargando publicaciones…",
+      verTodas: "Ver todas en el Portal Científico",
+      leer: "Leer la publicación",
+      resumen: (n, anio) => `${n} trabajos publicados en ${anio} por investigadoras e investigadores del instituto.`,
+      sinDatos: "Todavía no hay publicaciones de este año.",
+      error: "No se han podido cargar las publicaciones.",
+      y: " y ",
+      mas: n => ` y ${n} más`,
+      meses: ["", "enero", "febrero", "marzo", "abril", "mayo", "junio",
+              "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"],
+      tipos: {}
+    },
+    en: {
+      titulo: "Latest from BIOMA",
+      cargando: "Loading publications…",
+      verTodas: "See all on the Research Portal",
+      leer: "Read the publication",
+      resumen: (n, anio) => `${n} publications in ${anio} by researchers at the institute.`,
+      sinDatos: "No publications yet this year.",
+      error: "Publications could not be loaded.",
+      y: " and ",
+      mas: n => ` and ${n} more`,
+      meses: ["", "January", "February", "March", "April", "May", "June",
+              "July", "August", "September", "October", "November", "December"],
+      tipos: {
+        "artículo": "Article", "revisión": "Review", "artículo de datos": "Data paper",
+        "libro": "Book", "capítulo de libro": "Book chapter", "aportación congreso": "Conference paper"
+      }
+    }
+  };
+  const T = TEXTOS[LANG];
+  const MESES = T.meses;
 
   // Escapa texto de la hoja antes de meterlo en innerHTML
   function esc(s) {
@@ -219,8 +269,8 @@
   }
 
   function autoresTxt(a) {
-    if (a.length <= 2) return a.join(" y ");
-    return a[0] + ", " + a[1] + " y " + (a.length - 2) + " más";
+    if (a.length <= 2) return a.join(T.y);
+    return a[0] + ", " + a[1] + T.mas(a.length - 2);
   }
 
   function mezclar(arr) {
@@ -272,14 +322,14 @@
     a.rel = "noopener";
     a.innerHTML = `
       <div class="card-cab" style="background:${COLORES[i % COLORES.length]}">
-        <span class="card-revista clamp1">${esc(p.revista || p.tipo)}</span>
+        <span class="card-revista clamp1">${esc(p.revista || T.tipos[p.tipo.toLowerCase()] || p.tipo)}</span>
         <span class="card-fecha">${esc(fecha)}</span>
         ${q ? `<span class="card-q">${q}</span>` : ""}
       </div>
       <div class="card-cuerpo">
         <h3 class="card-titulo clamp3">${esc(p.titulo)}</h3>
         ${p.miembros.length ? `<p class="card-autores clamp1">${esc(autoresTxt(p.miembros))}</p>` : ""}
-        <span class="card-mas">Leer la publicación</span>
+        <span class="card-mas">${T.leer}</span>
       </div>`;
     return a;
   }
@@ -304,7 +354,16 @@
     document.getElementById("muro").innerHTML = `<p class="mensaje">${esc(msg)}</p>`;
   }
 
+  function aplicarIdioma() {
+    document.documentElement.lang = LANG;
+    document.title = T.titulo;
+    document.getElementById("bioma-titulo").textContent = T.titulo;
+    document.getElementById("bioma-resumen").textContent = T.cargando;
+    document.querySelector(".ver-todas").textContent = T.verTodas;
+  }
+
   async function iniciar() {
+    aplicarIdioma();
     try {
       const resp = await fetch(SHEET_CSV_URL + "&t=" + Date.now(), { cache: "no-store" });
       if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
@@ -318,9 +377,9 @@
       const delAnio = agruparPublicaciones(filtradas).filter(p => p.anio === anioActual);
 
       document.getElementById("bioma-resumen").textContent =
-        `${delAnio.length} trabajos publicados en ${anioActual} por investigadoras e investigadores del instituto.`;
+        T.resumen(delAnio.length, anioActual);
 
-      if (!delAnio.length) { mostrarMensaje("Todavía no hay publicaciones de este año."); return; }
+      if (!delAnio.length) { mostrarMensaje(T.sinDatos); return; }
 
       const elegidas = mezclar(delAnio).slice(0, MAX_PUBLICACIONES);
       // Con pocas publicaciones, una sola fila
@@ -333,7 +392,7 @@
     } catch (err) {
       console.error(err);
       document.getElementById("bioma-resumen").textContent = "";
-      mostrarMensaje("No se han podido cargar las publicaciones.");
+      mostrarMensaje(T.error);
     }
   }
 

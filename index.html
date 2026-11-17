@@ -3,198 +3,179 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Últimas Publicaciones Científicas - BIOMA</title>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet"/>
+  <title>Lo último de BIOMA - Publicaciones científicas</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet"/>
   <style>
+    /* Paleta y tipografías del manual de marca BIOMA */
     :root {
-      --verde:      #3ab549;
-      --verde-dark: #2a8a36;
-      --verde-pale: #edf7ee;
-      --gris-text:  #2c2c2c;
-      --gris-mid:   #666;
-      --gris-light: #f4f4f4;
-      --blanco:     #ffffff;
-      --borde:      #e0e0e0;
+      --bioma-blue:       #5297d2;
+      --bioma-blue-light: #92c3ea;
+      --bioma-green-dark: #475a23;
+      --bioma-lime:       #babf0a;
+      --bioma-sand:       #e8e3d9;
       --font-title: 'Playfair Display', serif;
-      --font-body: 'Roboto', sans-serif;
+      --font-body:  'Roboto', sans-serif;
+
+      --card-w: 440px;
+      --card-h: 252px;
+      --gap: 20px;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
-
-    html, body {
-      width: 100vw;
-      overflow-x: hidden;
-      background: transparent;
-    }
-
+    html, body { height: 100%; }
     body {
       font-family: var(--font-body);
-      background: transparent;
-      padding: 60px 0;
-      color: var(--gris-text);
-      /* Rompe el max-container del padre Liferay */
-      position: relative;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 100vw;
-    }
-
-    .bioma-publicaciones { width: 100vw; }
-
-    .bioma-header {
-      display: flex; align-items: flex-end; justify-content: space-between;
-      margin-bottom: 36px; gap: 16px; flex-wrap: wrap;
-      padding: 0 48px;
-    }
-    .bioma-eyebrow {
-      font-family: var(--font-body); font-size: 0.82rem; font-weight: 700;
-      letter-spacing: 2.5px; text-transform: uppercase; color: var(--verde); margin-bottom: 8px;
-    }
-    .bioma-titulo {
-      font-family: var(--font-title); font-size: 2.4rem; font-weight: 700;
-      color: var(--gris-text); line-height: 1.2;
-    }
-    .bioma-ver-todas {
-      font-family: var(--font-body); font-size: 0.9rem; font-weight: 700;
-      letter-spacing: 1.5px; text-transform: uppercase; color: var(--verde-dark);
-      text-decoration: none; border-bottom: 2px solid var(--verde);
-      padding-bottom: 2px; transition: color 0.2s; white-space: nowrap;
-    }
-    .bioma-ver-todas:hover { color: var(--verde); }
-
-    .carrusel-outer {
-      position: relative;
+      background: var(--bioma-green-dark);
+      color: #fff;
       overflow: hidden;
+    }
+
+    .bioma {
+      position: relative;
       width: 100%;
-    }
-
-    .carrusel-track {
-      display: flex;
-      gap: 28px;
-      padding: 12px 48px 20px;
-      will-change: transform;
-    }
-
-    .card {
-      min-width: 360px;
-      max-width: 360px;
-      background: var(--blanco);
-      border-radius: 10px;
-      box-shadow: 0 2px 16px rgba(0,0,0,0.08);
-      display: flex;
-      flex-direction: column;
+      height: 100%;
+      min-height: 560px;
       overflow: hidden;
-      transition: transform 0.25s, box-shadow 0.25s;
-      flex-shrink: 0;
+      background: var(--bioma-green-dark);
     }
-    .card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 8px 28px rgba(0,0,0,0.13);
-    }
-    .card-top-bar { height: 5px; background: var(--verde); flex-shrink: 0; }
-    .card-body {
-      padding: 22px 22px 14px; flex: 1;
-      display: flex; flex-direction: column; gap: 12px;
-    }
-    .card-meta { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-    .card-anio {
-      font-size: 0.8rem; font-weight: 700; letter-spacing: 1.5px;
-      color: var(--verde-dark); text-transform: uppercase;
-    }
-    .card-tipo {
-      font-size: 0.74rem; font-weight: 600; color: var(--verde-dark);
-      background: var(--verde-pale); border-radius: 30px;
-      padding: 3px 12px; text-transform: uppercase; letter-spacing: 0.8px;
-    }
-    .card-titulo {
-      font-family: var(--font-title); font-size: 1.05rem; font-weight: 700;
-      color: var(--gris-text); line-height: 1.45;
-      display: -webkit-box; -webkit-line-clamp: 4;
-      -webkit-box-orient: vertical; overflow: hidden;
-    }
-    .card-autores-label {
-      font-size: 0.7rem; font-weight: 700; letter-spacing: 1.2px;
-      text-transform: uppercase; color: var(--verde); margin-bottom: -6px;
-    }
-    .card-autores {
-      font-size: 0.85rem; color: var(--gris-mid); line-height: 1.45;
-      display: -webkit-box; -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical; overflow: hidden;
-    }
-    .card-footer {
-      padding: 14px 22px 20px; border-top: 1px solid var(--borde); margin-top: auto;
-    }
-    .card-link {
-      display: inline-flex; align-items: center; gap: 6px;
-      font-size: 0.82rem; font-weight: 700; letter-spacing: 0.8px;
-      text-transform: uppercase; color: var(--verde-dark);
-      text-decoration: none; transition: color 0.2s, gap 0.2s;
-    }
-    .card-link:hover { color: var(--verde); gap: 10px; }
-    .card-link-arrow { font-size: 1rem; line-height: 1; }
-    .card-sin-enlace { font-size: 0.78rem; color: #bbb; font-style: italic; }
 
-    .indicadores { display: flex; justify-content: center; gap: 7px; margin-top: 28px; }
-    .indicador {
-      width: 7px; height: 7px; border-radius: 50%; background: #ccc;
-      cursor: pointer; transition: background 0.25s, transform 0.25s;
-    }
-    .indicador.activo { background: var(--verde); transform: scale(1.3); }
+    /* Tubos de la marca (decoración) */
+    .tubos { position: absolute; left: 0; top: 0; width: 420px; height: 100%; pointer-events: none; }
+    .tubos path { fill: none; stroke-linecap: round; }
 
-    @media (max-width: 1200px) {
-      .card { min-width: 320px; max-width: 320px; }
+    /* Bloque de texto de la izquierda */
+    .intro {
+      position: absolute; left: 64px; top: 0; bottom: 0; width: 300px; z-index: 2;
+      display: flex; flex-direction: column; justify-content: center; gap: 22px;
     }
-    @media (max-width: 900px) {
-      .card { min-width: 290px; max-width: 290px; }
-      .bioma-titulo { font-size: 1.8rem; }
-      .bioma-header { padding: 0 24px; }
-      .carrusel-track { padding: 12px 24px 20px; }
+    .intro h2 {
+      font-family: var(--font-title); font-weight: 700;
+      font-size: 54px; line-height: 1.05; letter-spacing: -0.5px;
     }
-    @media (max-width: 600px) {
-      .card { min-width: calc(100vw - 60px); max-width: calc(100vw - 60px); }
-      .bioma-ver-todas { display: none; }
-      .bioma-header { padding: 0 16px; }
-      .carrusel-track { padding: 12px 16px 20px; }
+    .intro p { font-size: 18px; font-weight: 300; line-height: 1.5; }
+    .ver-todas {
+      align-self: flex-start; color: #fff; text-decoration: none;
+      font-size: 16px; font-weight: 500;
+      padding-bottom: 4px; border-bottom: 3px solid var(--bioma-lime);
+    }
+
+    /* Doble cinta */
+    .muro {
+      position: absolute; left: 400px; right: 0; top: 0; bottom: 0;
+      overflow: hidden;
+      display: flex; flex-direction: column; justify-content: center; gap: var(--gap);
+      -webkit-mask-image: linear-gradient(to right, transparent 0, #000 80px, #000 calc(100% - 40px), transparent 100%);
+              mask-image: linear-gradient(to right, transparent 0, #000 80px, #000 calc(100% - 40px), transparent 100%);
+    }
+    .fila {
+      display: flex; gap: var(--gap); padding-right: var(--gap);
+      width: max-content; padding-block: 8px;
+      animation-timing-function: linear; animation-iteration-count: infinite;
+    }
+    .fila.izq { animation-name: hacia-izq; }
+    .fila.der { animation-name: hacia-der; }
+    .muro:hover .fila, .muro:focus-within .fila { animation-play-state: paused; }
+    @keyframes hacia-izq { from { transform: translateX(0); }    to { transform: translateX(-50%); } }
+    @keyframes hacia-der { from { transform: translateX(-50%); } to { transform: translateX(0); } }
+
+    /* Tarjeta */
+    .card {
+      flex: 0 0 auto; width: var(--card-w); height: var(--card-h);
+      display: flex; flex-direction: column;
+      border-radius: 26px; overflow: hidden;
+      background: #fff; color: #000; text-decoration: none;
+      box-shadow: 0 14px 32px rgba(20, 30, 5, 0.32);
+      transition: transform .35s cubic-bezier(.2,.7,.2,1), box-shadow .35s;
+    }
+    .card:hover { transform: translateY(-6px) rotate(-0.8deg); box-shadow: 0 22px 44px rgba(20, 30, 5, 0.45); }
+    .card:hover .card-mas { text-decoration-thickness: 3px; }
+    .card-cab {
+      height: 60px; flex: 0 0 auto; padding: 0 22px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .card-revista { flex: 1; min-width: 0; font-size: 15px; font-weight: 500; }
+    .card-fecha { font-size: 13px; white-space: nowrap; }
+    .card-q { background: #fff; border-radius: 99px; padding: 3px 10px; font-weight: 700; font-size: 13px; }
+    .card-cuerpo {
+      flex: 1; min-height: 0; padding: 16px 22px 18px;
+      display: flex; flex-direction: column; gap: 8px;
+    }
+    .card-titulo { font-family: var(--font-title); font-weight: 700; font-size: 19px; line-height: 1.3; }
+    .card-autores { font-size: 14px; line-height: 1.4; color: #3d3d3d; }
+    .card-mas {
+      margin-top: auto; font-size: 14px; font-weight: 500; color: var(--bioma-green-dark);
+      text-decoration: underline; text-decoration-color: var(--bioma-lime);
+      text-underline-offset: 5px; text-decoration-thickness: 2px;
+    }
+    .clamp1 { display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
+    .clamp3 { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+
+    .card:focus-visible, .ver-todas:focus-visible { outline: 3px solid var(--bioma-lime); outline-offset: 4px; }
+
+    .mensaje { padding: 0 24px; font-size: 16px; font-weight: 300; }
+
+    /* Pantallas medianas */
+    @media (max-width: 1100px) {
+      :root { --card-w: 380px; }
+      .intro { left: 40px; width: 250px; }
+      .intro h2 { font-size: 44px; }
+      .muro { left: 320px; }
+    }
+
+    /* Móvil: el texto pasa arriba y las tarjetas debajo */
+    @media (max-width: 760px) {
+      :root { --card-w: 290px; --card-h: 206px; --gap: 12px; }
+      .tubos { display: none; }
+      .intro {
+        position: static; width: auto; padding: 24px 20px 12px; gap: 10px;
+      }
+      .intro h2 { font-size: 32px; }
+      .intro p { font-size: 15px; }
+      .ver-todas { font-size: 14px; }
+      .muro {
+        position: static; justify-content: flex-start;
+        -webkit-mask-image: none; mask-image: none;
+      }
+      .card-cab { height: 48px; padding: 0 16px; }
+      .card-cuerpo { padding: 12px 16px 14px; gap: 6px; }
+      .card-titulo { font-size: 16px; }
+      .card-autores, .card-mas { font-size: 13px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .fila { animation: none !important; }
+      .muro { overflow-x: auto; }
+      .card { transition: none; }
     }
   </style>
 </head>
 <body>
 
-<section class="bioma-publicaciones">
-  <div class="bioma-header">
-    <div class="bioma-header-left">
-      <p class="bioma-eyebrow">Instituto BIOMA · UNAV</p>
-      <h2 class="bioma-titulo">Últimas publicaciones</h2>
-    </div>
-    <a class="bioma-ver-todas"
+<section class="bioma" aria-labelledby="bioma-titulo">
+  <svg class="tubos" aria-hidden="true" viewBox="0 0 420 600" preserveAspectRatio="xMinYMax slice">
+    <path d="M -80 480 C 110 480 230 430 300 350" stroke="#babf0a" stroke-width="70"></path>
+    <path d="M 190 690 C 190 615 240 568 320 568" stroke="#92c3ea" stroke-width="70"></path>
+    <path d="M -60 40 C 40 40 90 10 110 -60" stroke="#5297d2" stroke-width="56"></path>
+  </svg>
+
+  <div class="intro">
+    <h2 id="bioma-titulo">Lo último de BIOMA</h2>
+    <p id="bioma-resumen">Cargando publicaciones…</p>
+    <a class="ver-todas"
        href="https://portalcientifico.unav.edu/unidades/22157/publicaciones"
-       target="_blank" rel="noopener">
-      Ver todas las publicaciones →
-    </a>
+       target="_blank" rel="noopener">Ver todas en el Portal Científico</a>
   </div>
 
-  <div class="carrusel-outer" id="carrusel-outer">
-    <div class="carrusel-track" id="carrusel"></div>
+  <div class="muro" id="muro">
+    <div class="fila izq" id="fila1"></div>
+    <div class="fila der" id="fila2"></div>
   </div>
-
-  <div class="indicadores" id="indicadores"></div>
 </section>
 
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 
 <script>
   const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/1tMv-ttzHwAf3ig7FYrpT2cBZxDDrz4gVSJ4EChf6nz0/export?format=csv&gid=1652416312";
-
-  const GAP = 28;
-  const CARD_W = 360;
-  const STEP = CARD_W + GAP;
-  const SPEED_PX_PER_S = 60;
-
-  let PUBLICACIONES = [];
-  let offset = 0;
-  let paused = false;
-  let lastTs = null;
-  let rafId = null;
-  let totalWidth = 0;
 
   // Solo se muestran estos valores de "Tipo de publicación".
   // Fuera: Errata, Editorial, Reseña, Nota, Carta (y cualquier tipo nuevo no listado).
@@ -203,6 +184,12 @@
     "libro", "capítulo de libro", "aportación congreso"
   ]);
 
+  const MAX_PUBLICACIONES = 30;        // máximo de tarjetas entre las dos filas
+  const VELOCIDAD_PX_S = 28;           // velocidad de las cintas
+  const COLORES = ["#92c3ea", "#babf0a", "#e8e3d9", "#5297d2"];
+  const MESES = ["", "enero", "febrero", "marzo", "abril", "mayo", "junio",
+                 "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
+
   // Escapa texto de la hoja antes de meterlo en innerHTML
   function esc(s) {
     return String(s ?? "")
@@ -210,44 +197,7 @@
       .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
   }
 
-  function crearCard(p) {
-    const miembros = esc(Array.isArray(p.miembros) ? p.miembros.join(", ") : (p.miembros || ""));
-    const enlace = /^https?:\/\//i.test(p.url || "") ? esc(p.url) : null;
-
-    const article = document.createElement("article");
-    article.className = "card";
-    article.innerHTML = `
-      <div class="card-top-bar"></div>
-      <div class="card-body">
-        <div class="card-meta">
-          <span class="card-anio">${p.anio ? esc(parseInt(p.anio) || p.anio) : "—"}</span>
-          ${p.tipo ? `<span class="card-tipo">${esc(p.tipo)}</span>` : ""}
-        </div>
-        <h3 class="card-titulo">${esc(p.titulo) || "Sin título"}</h3>
-        ${miembros ? `
-          <p class="card-autores-label">Autores BIOMA</p>
-          <p class="card-autores">${miembros}</p>
-        ` : ""}
-      </div>
-      <div class="card-footer">
-        ${enlace
-          ? `<a class="card-link" href="${enlace}" target="_blank" rel="noopener">
-               Ver en portal científico <span class="card-link-arrow">→</span>
-             </a>`
-          : `<span class="card-sin-enlace">Enlace no disponible</span>`
-        }
-      </div>
-    `;
-    return article;
-  }
-
-  function mostrarMensaje(msg) {
-    document.getElementById("carrusel").innerHTML =
-      `<p style="padding:20px 48px;">${msg}</p>`;
-  }
-
-  // Convierte "Apellidos, Nombre" → "Nombre Apellidos"
-  // Si el formato no tiene coma (ej. ya está en orden natural), lo deja tal cual.
+  // "Apellidos, Nombre" → "Nombre Apellidos"
   function normalizarNombre(raw) {
     const partes = raw.split(",");
     if (partes.length >= 2) {
@@ -258,142 +208,133 @@
     return raw.trim();
   }
 
+  // Títulos que llegan TODO EN MAYÚSCULAS → solo la primera letra en mayúscula
+  function normalizarTitulo(t) {
+    const letras = t.replace(/[^A-Za-zÀ-ÿ]/g, "");
+    if (letras.length > 10 && letras === letras.toUpperCase()) {
+      const s = t.toLowerCase();
+      return s.charAt(0).toUpperCase() + s.slice(1);
+    }
+    return t;
+  }
+
+  function autoresTxt(a) {
+    if (a.length <= 2) return a.join(" y ");
+    return a[0] + ", " + a[1] + " y " + (a.length - 2) + " más";
+  }
+
+  function mezclar(arr) {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
   function agruparPublicaciones(rows) {
     const mapa = new Map();
-
     rows.forEach(row => {
       const titulo = (row["Título"] || "").trim();
+      if (!titulo) return;
       const id = (row["ID"] || "").trim();
       const url = (row["URL"] || "").trim();
-      const anio = (row["Año de publicación"] || "").trim();
-      const tipo = (row["Tipo de publicación"] || "").trim();
-      const doi = (row["DOI"] || "").trim();
-      const miembro = normalizarNombre((row["Miembro"] || "").trim());
-
-      if (!titulo) return;
-
       const clave = id || url || titulo;
 
       if (!mapa.has(clave)) {
         mapa.set(clave, {
-          titulo: titulo,
-          anio: anio,
-          tipo: tipo,
-          doi: doi,
+          titulo: normalizarTitulo(titulo),
+          anio: (row["Año de publicación"] || "").trim(),
+          mes: parseInt(row["Mes"], 10) || 0,
+          tipo: (row["Tipo de publicación"] || "").trim(),
+          revista: (row["sourceTitle"] || "").trim(),
+          cuartil: (row["Cuartil JIF"] || "").trim(),
           url: url,
           miembros: []
         });
       }
-
+      const miembro = normalizarNombre((row["Miembro"] || "").trim());
       const pub = mapa.get(clave);
+      if (miembro && !pub.miembros.includes(miembro)) pub.miembros.push(miembro);
+    });
+    return Array.from(mapa.values());
+  }
 
-      if (miembro && !pub.miembros.includes(miembro)) {
-        pub.miembros.push(miembro);
+  function crearCard(p, i) {
+    const enlace = /^https?:\/\//i.test(p.url) ? p.url : "https://portalcientifico.unav.edu/unidades/22157/publicaciones";
+    const fecha = (p.mes >= 1 && p.mes <= 12 ? MESES[p.mes] + " " : "") + p.anio;
+    const q = /^Q[1-4]$/.test(p.cuartil) ? p.cuartil : "";
+
+    const a = document.createElement("a");
+    a.className = "card";
+    a.href = enlace;
+    a.target = "_blank";
+    a.rel = "noopener";
+    a.innerHTML = `
+      <div class="card-cab" style="background:${COLORES[i % COLORES.length]}">
+        <span class="card-revista clamp1">${esc(p.revista || p.tipo)}</span>
+        <span class="card-fecha">${esc(fecha)}</span>
+        ${q ? `<span class="card-q">${q}</span>` : ""}
+      </div>
+      <div class="card-cuerpo">
+        <h3 class="card-titulo clamp3">${esc(p.titulo)}</h3>
+        ${p.miembros.length ? `<p class="card-autores clamp1">${esc(autoresTxt(p.miembros))}</p>` : ""}
+        <span class="card-mas">Leer la publicación</span>
+      </div>`;
+    return a;
+  }
+
+  // Rellena una fila con la lista duplicada (para que el bucle no se note)
+  function pintarFila(fila, pubs, offsetColor) {
+    fila.innerHTML = "";
+    if (!pubs.length) { fila.style.display = "none"; return; }
+    [...pubs, ...pubs].forEach((p, i) => {
+      const card = crearCard(p, (i % pubs.length) * 2 + offsetColor);
+      if (i >= pubs.length) {          // la copia no se lee ni se tabula dos veces
+        card.setAttribute("aria-hidden", "true");
+        card.tabIndex = -1;
       }
+      fila.appendChild(card);
     });
-
-    return Array.from(mapa.values())
-      .sort((a, b) => {
-        const ay = parseInt(a.anio) || 0;
-        const by = parseInt(b.anio) || 0;
-        return by - ay;
-      });
+    const anchoMitad = fila.scrollWidth / 2;
+    fila.style.animationDuration = Math.max(40, anchoMitad / VELOCIDAD_PX_S) + "s";
   }
 
-  function renderCarrusel() {
-    const track = document.getElementById("carrusel");
-    track.innerHTML = "";
-
-    if (!PUBLICACIONES.length) {
-      mostrarMensaje("No hay publicaciones disponibles.");
-      return;
-    }
-
-    const all = [...PUBLICACIONES, ...PUBLICACIONES, ...PUBLICACIONES];
-    all.forEach(p => track.appendChild(crearCard(p)));
-
-    totalWidth = PUBLICACIONES.length * STEP;
-    offset = totalWidth;
-    track.style.transform = `translateX(${-offset}px)`;
-  }
-
-  function tick(ts) {
-    if (PUBLICACIONES.length && !paused) {
-      if (lastTs !== null) {
-        const delta = ts - lastTs;
-        offset += (SPEED_PX_PER_S * delta) / 1000;
-
-        if (offset >= totalWidth * 2) offset -= totalWidth;
-        if (offset < totalWidth) offset += totalWidth;
-
-        document.getElementById("carrusel").style.transform = `translateX(${-offset}px)`;
-      }
-      lastTs = ts;
-    } else {
-      lastTs = null;
-    }
-
-    rafId = requestAnimationFrame(tick);
-  }
-
-  async function cargarPublicaciones() {
-    const url = SHEET_CSV_URL + "&t=" + Date.now();
-    const response = await fetch(url, { cache: "no-store" });
-
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}`);
-    }
-
-    const text = await response.text();
-
-    const parsed = Papa.parse(text, {
-      header: true,
-      skipEmptyLines: true
-    });
-
-    console.log("Columnas detectadas:", parsed.meta.fields);
-    console.log("Primeras filas:", parsed.data.slice(0, 3));
-
-    const filtradas = parsed.data.filter(row => {
-      const tipo = (row["Tipo de publicación"] || "").trim().toLowerCase();
-      return TIPOS_PERMITIDOS.has(tipo);
-    });
-
-    const todasAgrupadas = agruparPublicaciones(filtradas);
-    const anioActual = new Date().getFullYear().toString();
-    const delAnioActual = todasAgrupadas.filter(p => p.anio === anioActual);
-    
-    // Mezclar aleatoriamente (Fisher–Yates) y coger 15
-    const mezcladas = [...delAnioActual];
-    for (let i = mezcladas.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [mezcladas[i], mezcladas[j]] = [mezcladas[j], mezcladas[i]];
-    }
-    PUBLICACIONES = mezcladas.slice(0, 15);
-
-    console.log("Publicaciones agrupadas:", PUBLICACIONES.length);
-    console.log("Primeras publicaciones agrupadas:", PUBLICACIONES.slice(0, 3));
+  function mostrarMensaje(msg) {
+    document.getElementById("muro").innerHTML = `<p class="mensaje">${esc(msg)}</p>`;
   }
 
   async function iniciar() {
-    const outer = document.getElementById("carrusel-outer");
-
-    outer.addEventListener("mouseenter", () => { paused = true; });
-    outer.addEventListener("mouseleave", () => { paused = false; });
-    outer.addEventListener("touchstart", () => { paused = true; }, { passive: true });
-    outer.addEventListener("touchend", () => {
-      setTimeout(() => { paused = false; }, 2000);
-    });
-
     try {
-      await cargarPublicaciones();
-      renderCarrusel();
+      const resp = await fetch(SHEET_CSV_URL + "&t=" + Date.now(), { cache: "no-store" });
+      if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+      const parsed = Papa.parse(await resp.text(), { header: true, skipEmptyLines: true });
+
+      const filtradas = parsed.data.filter(row =>
+        TIPOS_PERMITIDOS.has((row["Tipo de publicación"] || "").trim().toLowerCase())
+      );
+
+      const anioActual = String(new Date().getFullYear());
+      const delAnio = agruparPublicaciones(filtradas).filter(p => p.anio === anioActual);
+
+      document.getElementById("bioma-resumen").textContent =
+        `${delAnio.length} trabajos publicados en ${anioActual} por investigadoras e investigadores del instituto.`;
+
+      if (!delAnio.length) { mostrarMensaje("Todavía no hay publicaciones de este año."); return; }
+
+      const elegidas = mezclar(delAnio).slice(0, MAX_PUBLICACIONES);
+      // Con pocas publicaciones, una sola fila
+      const f1 = elegidas.length < 8 ? elegidas : elegidas.filter((_, i) => i % 2 === 0);
+      const f2 = elegidas.length < 8 ? [] : elegidas.filter((_, i) => i % 2 === 1);
+
+      await document.fonts.ready;      // medir el ancho con las fuentes ya cargadas
+      pintarFila(document.getElementById("fila1"), f1, 0);
+      pintarFila(document.getElementById("fila2"), f2, 1);
     } catch (err) {
       console.error(err);
-      mostrarMensaje("Error al cargar publicaciones: " + err.message);
+      document.getElementById("bioma-resumen").textContent = "";
+      mostrarMensaje("No se han podido cargar las publicaciones.");
     }
-
-    rafId = requestAnimationFrame(tick);
   }
 
   iniciar();

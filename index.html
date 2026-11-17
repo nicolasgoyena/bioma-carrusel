@@ -180,7 +180,7 @@
   // Fuera: Errata, Editorial, Reseña, Nota, Carta (y cualquier tipo nuevo no listado).
   const TIPOS_PERMITIDOS = new Set([
     "artículo", "revisión", "artículo de datos",
-    "libro", "capítulo de libro", "aportación congreso"
+    "libro", "capítulo de libro", "aportación congreso", "aportación a congreso"
   ]);
 
   const MAX_PUBLICACIONES = 30;        // máximo de tarjetas entre las dos filas
@@ -320,7 +320,7 @@
     a.rel = "noopener";
     a.innerHTML = `
       <div class="card-cab" style="background:${COLORES[i % COLORES.length]}">
-        <span class="card-revista clamp1">${esc(p.revista || T.tipos[p.tipo.toLowerCase()] || p.tipo)}</span>
+        <span class="card-revista clamp1">${esc(p.revista)}</span>
         ${q ? `<span class="card-q">${q}</span>` : ""}
       </div>
       <div class="card-cuerpo">

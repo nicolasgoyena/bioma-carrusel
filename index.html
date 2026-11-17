@@ -196,9 +196,23 @@
   let rafId = null;
   let totalWidth = 0;
 
+  const TIPOS_EXCLUIDOS = [
+    "erratum", "corrigendum", "corrección", "correccion", "fe de erratas",
+    "editorial", "retracción", "retraccion", "retraction"
+  ];
+  const PREFIJOS_EXCLUIDOS =
+    /^(correction|corrigendum|erratum|retraction|expression of concern|corrección|correccion|fe de erratas)\b/;
+
+  // Escapa texto de la hoja antes de meterlo en innerHTML
+  function esc(s) {
+    return String(s ?? "")
+      .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+  }
+
   function crearCard(p) {
-    const miembros = Array.isArray(p.miembros) ? p.miembros.join(", ") : (p.miembros || "");
-    const enlace = p.url || null;
+    const miembros = esc(Array.isArray(p.miembros) ? p.miembros.join(", ") : (p.miembros || ""));
+    const enlace = /^https?:\/\//i.test(p.url || "") ? esc(p.url) : null;
 
     const article = document.createElement("article");
     article.className = "card";
@@ -206,10 +220,10 @@
       <div class="card-top-bar"></div>
       <div class="card-body">
         <div class="card-meta">
-          <span class="card-anio">${p.anio ? parseInt(p.anio) || p.anio : "—"}</span>
-          ${p.tipo ? `<span class="card-tipo">${p.tipo}</span>` : ""}
+          <span class="card-anio">${p.anio ? esc(parseInt(p.anio) || p.anio) : "—"}</span>
+          ${p.tipo ? `<span class="card-tipo">${esc(p.tipo)}</span>` : ""}
         </div>
-        <h3 class="card-titulo">${p.titulo || "Sin título"}</h3>
+        <h3 class="card-titulo">${esc(p.titulo) || "Sin título"}</h3>
         ${miembros ? `
           <p class="card-autores-label">Autores BIOMA</p>
           <p class="card-autores">${miembros}</p>
@@ -341,23 +355,28 @@
     console.log("Primeras filas:", parsed.data.slice(0, 3));
 
     const filtradas = parsed.data.filter(row => {
-      const tipo = (row["Tipo de publicación"] || "").toLowerCase();
-    
-      // excluir basura
-      if (tipo.includes("erratum")) return false;
-      if (tipo.includes("corrigendum")) return false;
-      if (tipo.includes("editorial")) return false;
-    
+      const tipo   = (row["Tipo de publicación"] || "").toLowerCase();
+      const titulo = (row["Título"] || "").toLowerCase().trim();
+
+      // Excluir por tipo (el Portal Científico usa tipos en castellano)
+      if (TIPOS_EXCLUIDOS.some(t => tipo.includes(t))) return false;
+
+      // Erratas/correcciones que vienen tipadas como "Artículo"
+      if (PREFIJOS_EXCLUIDOS.test(titulo)) return false;
+
       return true;
     });
-
 
     const todasAgrupadas = agruparPublicaciones(filtradas);
     const anioActual = new Date().getFullYear().toString();
     const delAnioActual = todasAgrupadas.filter(p => p.anio === anioActual);
     
-    // Mezclar aleatoriamente y coger 15
-    const mezcladas = delAnioActual.sort(() => Math.random() - 0.5);
+    // Mezclar aleatoriamente (Fisher–Yates) y coger 15
+    const mezcladas = [...delAnioActual];
+    for (let i = mezcladas.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [mezcladas[i], mezcladas[j]] = [mezcladas[j], mezcladas[i]];
+    }
     PUBLICACIONES = mezcladas.slice(0, 15);
 
     console.log("Publicaciones agrupadas:", PUBLICACIONES.length);

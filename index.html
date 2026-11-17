@@ -94,7 +94,6 @@
       display: flex; align-items: center; gap: 12px;
     }
     .card-revista { flex: 1; min-width: 0; font-size: 15px; font-weight: 500; }
-    .card-fecha { font-size: 13px; white-space: nowrap; }
     .card-q { background: #fff; border-radius: 99px; padding: 3px 10px; font-weight: 700; font-size: 13px; }
     .card-cuerpo {
       flex: 1; min-height: 0; padding: 16px 22px 18px;
@@ -312,7 +311,6 @@
 
   function crearCard(p, i) {
     const enlace = /^https?:\/\//i.test(p.url) ? p.url : "https://portalcientifico.unav.edu/unidades/22157/publicaciones";
-    const fecha = (p.mes >= 1 && p.mes <= 12 ? MESES[p.mes] + " " : "") + p.anio;
     const q = /^Q[1-4]$/.test(p.cuartil) ? p.cuartil : "";
 
     const a = document.createElement("a");
@@ -323,7 +321,6 @@
     a.innerHTML = `
       <div class="card-cab" style="background:${COLORES[i % COLORES.length]}">
         <span class="card-revista clamp1">${esc(p.revista || T.tipos[p.tipo.toLowerCase()] || p.tipo)}</span>
-        <span class="card-fecha">${esc(fecha)}</span>
         ${q ? `<span class="card-q">${q}</span>` : ""}
       </div>
       <div class="card-cuerpo">

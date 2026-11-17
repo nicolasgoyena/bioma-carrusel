@@ -196,8 +196,12 @@
   let rafId = null;
   let totalWidth = 0;
 
-  // Valores de la columna "Tipo de publicación" que no se muestran en el carrusel
-  const TIPOS_EXCLUIDOS = new Set(["errata", "editorial"]);
+  // Solo se muestran estos valores de "Tipo de publicación".
+  // Fuera: Errata, Editorial, Reseña, Nota, Carta (y cualquier tipo nuevo no listado).
+  const TIPOS_PERMITIDOS = new Set([
+    "artículo", "revisión", "artículo de datos",
+    "libro", "capítulo de libro", "aportación congreso"
+  ]);
 
   // Escapa texto de la hoja antes de meterlo en innerHTML
   function esc(s) {
@@ -352,7 +356,7 @@
 
     const filtradas = parsed.data.filter(row => {
       const tipo = (row["Tipo de publicación"] || "").trim().toLowerCase();
-      return !TIPOS_EXCLUIDOS.has(tipo);
+      return TIPOS_PERMITIDOS.has(tipo);
     });
 
     const todasAgrupadas = agruparPublicaciones(filtradas);

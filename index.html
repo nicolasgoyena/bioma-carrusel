@@ -209,14 +209,18 @@
       cargando: "Cargando publicaciones…",
       verTodas: "Ver todas en el Portal Científico",
       leer: "Leer la publicación",
-      resumen: (anio) => `Trabajos publicados en ${anio} por investigadoras e investigadores del instituto.`,
+      resumen: (anio) => `Trabajos publicados en ${anio} por investigadores del instituto.`,
       sinDatos: "Todavía no hay publicaciones de este año.",
       error: "No se han podido cargar las publicaciones.",
       y: " y ",
       mas: n => ` y ${n} más`,
       meses: ["", "enero", "febrero", "marzo", "abril", "mayo", "junio",
               "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"],
-      tipos: {}
+      // Etiqueta cuando no hay revista (capítulos, libros, congresos)
+      tipos: {
+        "libro": "Libro", "capítulo de libro": "Capítulo de libro",
+        "aportación congreso": "Congreso", "aportación a congreso": "Congreso"
+      }
     },
     en: {
       titulo: "Latest from BIOMA",
@@ -230,9 +234,10 @@
       mas: n => ` and ${n} more`,
       meses: ["", "January", "February", "March", "April", "May", "June",
               "July", "August", "September", "October", "November", "December"],
+      // Etiqueta cuando no hay revista (capítulos, libros, congresos)
       tipos: {
-        "artículo": "Article", "revisión": "Review", "artículo de datos": "Data paper",
-        "libro": "Book", "capítulo de libro": "Book chapter", "aportación congreso": "Conference paper"
+        "libro": "Book", "capítulo de libro": "Book chapter",
+        "aportación congreso": "Conference paper", "aportación a congreso": "Conference paper"
       }
     }
   };
@@ -320,7 +325,7 @@
     a.rel = "noopener";
     a.innerHTML = `
       <div class="card-cab" style="background:${COLORES[i % COLORES.length]}">
-        <span class="card-revista clamp1">${esc(p.revista)}</span>
+        <span class="card-revista clamp1">${esc(p.revista || T.tipos[p.tipo.toLowerCase()] || "")}</span>
         ${q ? `<span class="card-q">${q}</span>` : ""}
       </div>
       <div class="card-cuerpo">
